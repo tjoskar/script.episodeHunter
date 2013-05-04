@@ -46,6 +46,7 @@ class Connection(object):
         try:
             args['username'] = self.settings.getSetting("username")
             args['apikey'] = self.settings.getSetting("api_key")
+
             jdata = json.dumps(args)
         except Exception:
             Debug("makeRequest: Unable to create json object: " + str(args))
@@ -60,7 +61,7 @@ class Connection(object):
             notification(self.name, self.language(10056))
             return None
 
-        # And of we go
+        # And off we go
         try:
             self.connection.go()
         except Exception:

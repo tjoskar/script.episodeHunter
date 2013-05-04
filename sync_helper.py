@@ -20,7 +20,7 @@ def syncSeenMovies(gui=True):
     EH_movies = connection.getMoviesFromEP()
     xbmc_movies = getMoviesFromXBMC()
 
-    if xbmc_movies is None or xbmc_movies is None:
+    if xbmc_movies is None or xbmc_movies is None or EH_movies is None:
         if gui:
             progress.close()
         return

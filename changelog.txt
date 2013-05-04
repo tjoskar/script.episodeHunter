@@ -1,3 +1,5 @@
+Version 0.9.7:
+       Smaller bugfix
 Version 0.9.6:
        Rerender icon
 Version 0.9.5:
