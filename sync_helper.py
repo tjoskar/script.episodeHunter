@@ -1,6 +1,7 @@
 import xbmc
 import xbmcaddon
 import xbmcgui
+import time
 from connection_helper import Connection
 from xbmc_helper import *
 
