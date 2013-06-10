@@ -21,18 +21,22 @@ def notification(header, message):
 
 
 # Do we have username and api key?
-def isSettingsOkey(daemon=False):
+def isSettingsOkey(daemon=False, silent=False):
     settings = xbmcaddon.Addon("script.episodeHunter")
     language = settings.getLocalizedString
 
     if settings.getSetting("username") == "" and settings.getSetting("api_key") == "":
-        if daemon:
+        if silent:
+            return False
+        elif daemon:
             notification(_name, language(10063))
         else:
             xbmcgui.Dialog().ok(_name, language(10063))
         return False
 
     elif settings.getSetting("username") == "":
+        if silent:
+            return False
         if daemon:
             notification(_name, language(10030))
         else:
@@ -40,6 +44,8 @@ def isSettingsOkey(daemon=False):
         return False
 
     elif settings.getSetting("api_key") == "":
+        if silent:
+            return False
         if daemon:
             notification(_name, language(10031))
         else:

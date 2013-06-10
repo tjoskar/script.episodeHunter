@@ -59,7 +59,7 @@ def getMoviesFromXBMC():
 
 
 def getTVShowsFromXBMC():
-    rpccmd = json.dumps({'jsonrpc': '2.0', 'method': 'VideoLibrary.GetTVShows', 'params': {'properties': ['title', 'year', 'imdbnumber', 'playcount']}, 'id': 1})
+    rpccmd = json.dumps({'jsonrpc': '2.0', 'method': 'VideoLibrary.GetTVShows', 'params': {'properties': ['title', 'year', 'imdbnumber', 'playcount', 'season', 'watchedepisodes']}, 'id': 1})
 
     result = xbmc.executeJSONRPC(rpccmd)
     result = json.loads(result)
@@ -76,7 +76,7 @@ def getTVShowsFromXBMC():
 
 
 def getSeasonsFromXBMC(tvshow):
-    rpccmd = json.dumps({'jsonrpc': '2.0', 'method': 'VideoLibrary.GetSeasons', 'params': {'tvshowid': tvshow['tvshowid']}, 'id': 1})
+    rpccmd = json.dumps({'jsonrpc': '2.0', 'method': 'VideoLibrary.GetSeasons', 'params': {'tvshowid': tvshow['tvshowid'], 'properties': ['watchedepisodes']}, 'id': 1})
 
     result = xbmc.executeJSONRPC(rpccmd)
     result = json.loads(result)

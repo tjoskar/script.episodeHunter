@@ -38,7 +38,7 @@
     <string id="10046">No new watched movies to update for xbmc</string>
     <string id="10047">Checking XBMC Database for new watched Episodes</string>
     <string id="10048">Episodes will be added as watched</string>
-    <string id="10049">Episodes sucessfully updated to EpisodeHunter</string>
+    <string id="10049">Episodes sucessfully updated at EpisodeHunter</string>
     <string id="10050">Error uploading watched TVShows</string>
     <string id="10051">No new watched episodes in XBMC library to update</string>
     <string id="10052">TVShow Episodes will be set as watched on XBMC</string>
@@ -47,9 +47,11 @@
     <string id="10055">Connection timeout</string>
     <string id="10056">Socket error, unable to connect</string>
     <string id="10057">Bad JSON responce from episodehunter.tv</string>
-    <string id="10058">Movie sucessfully updated to EpisodeHunter</string>
+    <string id="10058">Movie sucessfully updated at EpisodeHunter</string>
     <string id="10061">Unable to send data</string>
     <string id="10062">Unable to read responce</string>
+    <string id="10064">Uploading shows to episodehunter</string>
+    <string id="10065">Uploading movies to episodehunter</string>
 
 
     <!-- Service -->

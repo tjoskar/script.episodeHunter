@@ -5,7 +5,14 @@
 * visit episodehunter.uservoice.com or            *
 * contact episodehunter on info@episodehunter.tv  *
 
-Rewrite sync_helper.py
 Check if user has correct user data before upload
-Notify user when scroble 
+Notify user when scroble
 Convert .xml to .po
+
+
+Code:
+200 => All OK
+400 => Bad request
+403 => Forbidden
+500 => Server error
+

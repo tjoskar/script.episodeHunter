@@ -2,7 +2,7 @@ import xbmcgui
 import xbmcaddon
 
 from helper import *
-from sync_helper import *
+from sync import *
 
 _settings = xbmcaddon.Addon("script.episodeHunter")
 _language = _settings.getLocalizedString
@@ -13,6 +13,7 @@ def menu():
 
     if not isSettingsOkey():
         _settings.openSettings()
+        return
 
     options = [_language(10024), _language(10026), _language(10023)]  # [Movie, TV, Settings]
 

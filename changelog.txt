@@ -1,3 +1,6 @@
+Version 0.9.9:
+       Major sync update
+       Update to API v2
 Version 0.9.8:
        Import Time lib to sync_helper
 Version 0.9.7:
