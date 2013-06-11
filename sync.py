@@ -118,7 +118,11 @@ def syncSeenMovies(gui=True):
             progress.update(50, _language(10065))               # 'Uploading movies to episodehunter'
             data = connection.setMoviesSeen(set_as_seen)
 
-            if 'status' in data:
+            if data is None:
+                Debug("Error uploading seen movies: response is None")
+                if gui:
+                    xbmcgui.Dialog().ok(_name, _language(10041), "")  # 'Error uploading watched movies'
+            elif 'status' in data:
                 if data['status'] == 400:
                     Debug("successfully uploaded seen movies")
                     if gui:
@@ -153,6 +157,9 @@ def syncSeenTVShows(gui=True):
         if gui:
             progress.close()
         return
+
+    if len(EH_tvshows) <= 0:
+        EH_tvshows = {}       # We will get a lot of errors. BUT we will catch them (with 'except')
 
     if 'tvshows' in xbmc_tvshows:
         xbmc_tvshows = xbmc_tvshows['tvshows']
@@ -208,7 +215,7 @@ def syncSeenTVShows(gui=True):
 
             try:
                 foundseason = False
-                for season in EH_tvshows[str(xbmc_tvshow['imdbnumber'])]['seasons'].values():
+                for season in EH_tvshows[str(xbmc_tvshow['imdbnumber'])]['seasons']:
                     foundseason = True
                     # Okey, we have seen some season (no KeyError). But have we seen them all?
                     if season['season'] == str(seasonid):
@@ -283,7 +290,10 @@ def syncSeenTVShows(gui=True):
 
                 data = connection.setTvSeen(show['tvdb_id'], show['title'], show['year'], show['episodes'])
 
-                if data['status'] == 'error':
+                if data is None:
+                    Debug("Error uploading tvshow: response is None")
+                    error = ""
+                elif data['status'] == 300:
                     Debug("Error uploading tvshow: " + show['title'] + ": " + str(data['data']))
                     error = data['data']
                 else:

@@ -64,7 +64,7 @@ def notSeenMovie(imdb, array):
 
 def seenEpisode(e, array):
     for i in range(0, len(array)):
-        if e == array[str(i)]:
+        if e == array[i]:
             return True
     return False
 

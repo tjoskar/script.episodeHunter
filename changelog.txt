@@ -1,3 +1,7 @@
+Version 1.0.2:
+       More quick bug fix
+Version 1.0.1:
+       Quick bug fix
 Version 1.0.0:
        Smaller bug fix
 Version 0.9.9:
