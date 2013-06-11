@@ -123,7 +123,7 @@ class Connection(object):
         return self.makeRequest('/v2/tv/watched', {'tvdb_id': tvdb_id, 'title': title, 'year': year, 'episodes': episodes})
 
     def getMoviesFromEP(self):
-        responce = self.makeRequest('/v2/movie/getWatched')
+        responce = self.makeRequest('/v2/movie/getwatched')
         if responce is None:
             Debug("getMoviesFromEP: Error")
             return None
@@ -140,7 +140,7 @@ class Connection(object):
         return None
 
     def getWatchedTVShowsFromEH(self):
-        responce = self.makeRequest('/v2/tv/getWatched')
+        responce = self.makeRequest('/v2/tv/getwatched')
         if responce is None:
             Debug("getWatchedTVShowsFromEH: Error")
             return None
@@ -169,13 +169,13 @@ class Connection(object):
         return responce
 
     def cancelWatchingMovie(self):
-        responce = self.makeRequest('/v2/movie/cancelWatching', {})
+        responce = self.makeRequest('/v2/movie/cancelwatching', {})
         if responce is None:
             Debug("cancelWatchingMovie: Error")
         return responce
 
     def cancelWatchingEpisode(self):
-        responce = self.makeRequest('/v2/tv/cancelWatching', {})
+        responce = self.makeRequest('/v2/tv/cancelwatching', {})
         if responce is None:
             Debug("cancelWatchingEpisode: Error")
         return responce
