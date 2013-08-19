@@ -37,8 +37,8 @@ Version 0.3.0:
 Version 0.2.1:
        Update to API r2
 Version 0.2.0:
-       Alpha testning
+       Alpha testing
 Version 0.1.1:
        Can now scrobbler movies ond tv shows
 Version 0.0.1:
-       The first verson of episodeHunter! Like a boss
+       The first version of episodeHunter! Like a boss
