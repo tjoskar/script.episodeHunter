@@ -27,7 +27,7 @@ class Connection(object):
             self.connection = HTTPConn(self.URL, 80)
         except socket.timeout:
             Debug("makeConnection: timeout")
-            notification(self.name, self.language(10055))
+            notification(self.name, self.language(10055), 1)                    # Connection timeout
             self.connection = None
 
     # Contact EpisodeHunter
@@ -58,7 +58,7 @@ class Connection(object):
             Debug("The data has left XBMC: " + request)
         except socket.error:
             Debug("makeRequest: Socket error, unable to connect")
-            notification(self.name, self.language(10056))                       # 'Socket error, unable to connect'
+            notification(self.name, self.language(10056), 1)                     # 'Socket error, unable to connect'
             return None
 
         # And off we go
@@ -66,7 +66,7 @@ class Connection(object):
             self.connection.go()
         except Exception:
             Debug("makeRequest: Unable to send data")
-            notification(self.name, self.language(10061))                       # 'Unable to send data'
+            notification(self.name, self.language(10061), 1)                     # 'Unable to send data'
             return None
 
         # Wait for the respond, timeout after 15s
@@ -82,7 +82,7 @@ class Connection(object):
             i = i + 1
             if i >= 15:
                 Debug("makeRequest: Connection timeout")
-                notification(self.name, self.language(10055))
+                notification(self.name, self.language(10055), 1)                # Connection timeout
                 return None
 
         # Ladies and gentlemen, we have a result
@@ -91,7 +91,7 @@ class Connection(object):
             raw = response.read()
         except Exception:
             Debug("Unable to read responce")
-            notification(self.name, self.language(10062))
+            notification(self.name, self.language(10062), 1)                    # Unable to read response
             return None
         finally:
             try:
@@ -105,7 +105,7 @@ class Connection(object):
             data = json.loads(raw)
         except ValueError:
             Debug("makeRequest: Bad JSON responce: " + raw)
-            notification(self.name, self.language(10057))
+            notification(self.name, self.language(10057), 1)                    # Bad JSON response from episodehunter.tv
             return None
 
         # if 'status' in data and 'data' in data:

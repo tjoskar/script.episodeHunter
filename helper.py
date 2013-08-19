@@ -4,20 +4,26 @@ import xbmcgui
 
 _name = "EpisodeHunter"
 
-debug = True
-
 
 def Debug(msg):
+    settings = xbmcaddon.Addon("script.episodeHunter")
+    debug = settings.getSetting("debug")
     if debug:
         try:
             print _name + ": " + msg
         except Exception:
-            print _name + ": You are trying to print some bad string, " + msg.encode("utf-8", "ignore")
+            try:
+                print _name + ": You are trying to print some bad string, " + msg.encode("utf-8", "ignore")
+            except Exception:
+                print _name + ": You are trying to print a bad string, I can not even print it"
 
 
-def notification(header, message):
+
+def notification(header, message, level=0):
     settings = xbmcaddon.Addon("script.episodeHunter")
-    xbmc.executebuiltin("XBMC.Notification(%s,%s,%i,%s)" % (header, message, 5000, settings.getAddonInfo("icon")))
+    debug = settings.getSetting("debug")
+    if debug or level == 0:
+        xbmc.executebuiltin("XBMC.Notification(%s,%s,%i,%s)" % (header, message, 5000, settings.getAddonInfo("icon")))
 
 
 # Do we have username and api key?

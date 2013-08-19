@@ -1,3 +1,5 @@
+Version 1.0.3:
+       Added debug option in settings
 Version 1.0.2:
        More quick bug fix
 Version 1.0.1:
