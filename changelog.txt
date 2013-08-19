@@ -1,4 +1,4 @@
-Version 1.0.3:
+Version 1.0.4:
        Added debug option in settings
 Version 1.0.2:
        More quick bug fix
@@ -20,13 +20,13 @@ Version 0.9.5:
 Version 0.9.4:
        Bugfix
 Version 0.9.2:
-    Update the license file
-    Some bugfix
-    Remove default_value.py
+       Update the license file
+       Some bugfix
+       Remove default_value.py
 Version 0.9.1:
-    Added offline support and drop password (using api key instead)
+       Added offline support and drop password (using api key instead)
 Version 0.8.7:
-    BugFix
+       BugFix
 Version 0.8.6:
        BugFix: Fix that movie scrobbles again
 Version 0.8.5:
