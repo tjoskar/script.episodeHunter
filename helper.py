@@ -35,27 +35,27 @@ def isSettingsOkey(daemon=False, silent=False):
         if silent:
             return False
         elif daemon:
-            notification(_name, language(10063))
+            notification(_name, language(32014))
         else:
-            xbmcgui.Dialog().ok(_name, language(10063))
+            xbmcgui.Dialog().ok(_name, language(32014))
         return False
 
     elif settings.getSetting("username") == "":
         if silent:
             return False
         if daemon:
-            notification(_name, language(10030))
+            notification(_name, language(32012))
         else:
-            xbmcgui.Dialog().ok(_name, language(10030))
+            xbmcgui.Dialog().ok(_name, language(32012))
         return False
 
     elif settings.getSetting("api_key") == "":
         if silent:
             return False
         if daemon:
-            notification(_name, language(10031))
+            notification(_name, language(32013))
         else:
-            xbmcgui.Dialog().ok(_name, language(10031))
+            xbmcgui.Dialog().ok(_name, language(32013))
         return False
 
     return True
