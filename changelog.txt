@@ -14,7 +14,7 @@ Version 0.9.8:
 Version 0.9.7:
        Smaller bugfix
 Version 0.9.6:
-       Rerender icon
+       Re-render icon
 Version 0.9.5:
        Sync bugfix
 Version 0.9.4:
@@ -24,7 +24,7 @@ Version 0.9.2:
        Some bugfix
        Remove default_value.py
 Version 0.9.1:
-       Added offline support and drop password (using api key instead)
+       Added off-line support and drop password (using api key instead)
 Version 0.8.7:
        BugFix
 Version 0.8.6:
@@ -39,6 +39,6 @@ Version 0.2.1:
 Version 0.2.0:
        Alpha testing
 Version 0.1.1:
-       Can now scrobbler movies ond tv shows
+       Can now scrobbler movies and tv shows
 Version 0.0.1:
        The first version of episodeHunter! Like a boss
