@@ -154,6 +154,7 @@ def syncSeenTVShows(gui=True):
     xbmc_tvshows = getTVShowsFromXBMC()                 # Get all tv shows in XBMC
 
     if xbmc_tvshows is None or EH_tvshows is None:
+        Debug('xbmc_tvshows or EH_tvshows is None')
         if gui:
             progress.close()
         return
@@ -181,7 +182,11 @@ def syncSeenTVShows(gui=True):
                 xbmcgui.Dialog().ok(_name, _language(32022))    # "Progress Aborted"
                 break
 
-        seasons = getSeasonsFromXBMC(xbmc_tvshow)               # Get a list of seasons
+        if 'tvshowid' in xbmc_tvshow:
+            seasons = getSeasonsFromXBMC(xbmc_tvshow)           # Get a list of seasons
+        else:
+            Debug("Skipping tv show - no tvdb ID was found")
+            continue
 
         try:
             tvshow['title'] = xbmc_tvshow['title']
@@ -189,14 +194,16 @@ def syncSeenTVShows(gui=True):
             tvshow['tvdb_id'] = xbmc_tvshow['imdbnumber']
             seasons = seasons['seasons']
         except KeyError:
+            Debug("Skipping tv show - key error")
             continue
 
         tvshow['episodes'] = []
 
         number_seasons = len(seasons)
 
+        seasonid = -1
         for j in range(0, number_seasons):
-            seasonid = 0
+            seasonid += 1
             while True:
                 episodes = getEpisodesFromXBMC(xbmc_tvshow, seasonid)
                 if 'limits' in episodes and 'total' in episodes['limits'] and episodes['limits']['total'] > 0:
@@ -272,7 +279,7 @@ def syncSeenTVShows(gui=True):
         else:
             choice = 0
 
-        if choice == 1 or choice is True:   # I belive this is OS bedending
+        if choice == 1 or choice is True:   # I believe this is OS depending
             error = None
 
             n = len(set_as_seen)

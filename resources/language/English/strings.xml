@@ -15,13 +15,13 @@
 
     <!-- Headline menu -->
     <string id="32009">Sync watched Movies</string>
-    <string id="32010">Sync watched TV</string>
+    <string id="32010">Sync watched TV episodes</string>
     <string id="32011">Settings</string>
 
     <!-- Helper*.py -->
     <string id="32012">No username found, please fill in your username</string>
-    <string id="32013">No api key found, please fill in your api key</string>
-    <string id="32014">No username or api key found, please fill in your user details</string>
+    <string id="32013">No api key found, please fill in your API key</string>
+    <string id="32014">No username or API key found, please fill in your user details</string>
     <string id="32015">Can not connect, timeout</string>
     <string id="32016">Can not connect, socket error</string>
     <string id="32017">Error: Bad response</string>
