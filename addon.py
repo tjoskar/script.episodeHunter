@@ -91,7 +91,8 @@ class EHPlayer(xbmc.Player):
 
     def onPlayBackEnded(self):
         Debug("onPlayBackEnded")
-        self.onPlayBackStopped()    # Playback end, playback stop.. Big difference.. NOT..
+	self.watched_time = self.total_time
+	self.onPlayBackStopped()
 
     def onPlayBackStopped(self):
         Debug("onPlayBackStopped")
