@@ -12,9 +12,6 @@ _name = "EpisodeHunter"
 
 
 def syncSeenMovies(gui=True):
-
-    Debug('syncSeenMovies')
-
     if gui:
         progress = xbmcgui.DialogProgress()
         progress.create(_name, _language(32021))  # "Checking XBMC Database for new watched Movies"
@@ -140,8 +137,6 @@ def syncSeenMovies(gui=True):
 
 
 def syncSeenTVShows(gui=True):
-
-    Debug('syncSeenTVShows')
     MAX_SEASON_NUMBER = 50
 
     if gui:                                       # Are we syncing in a GUI?
@@ -303,8 +298,6 @@ def syncSeenTVShows(gui=True):
                 elif data['status'] == 300:
                     Debug("Error uploading tvshow: " + show['title'] + ": " + str(data['data']))
                     error = data['data']
-                else:
-                    Debug("Successfully uploaded tvshow " + show['title'] + ": " + str(data['data']))
 
             if error is None:
                 if gui:

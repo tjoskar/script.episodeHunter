@@ -95,7 +95,6 @@ class Database(object):
                 con.commit()
             except Exception:
                 Debug("Unable to write to database: " + str(data))
-                print(traceback.format_exc())
             finally:
                 try:
                     con.close()
@@ -120,7 +119,6 @@ class Database(object):
                     con.commit()
                 except Exception:
                     Debug("Unable to delete row: " + str(row_id))
-                    print(traceback.format_exc())
                     continue
 
             try:

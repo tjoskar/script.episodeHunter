@@ -55,7 +55,6 @@ class Connection(object):
         # Create the request
         try:
             self.connection.request(request, jdata)
-            Debug("The data has left XBMC: " + request)
         except socket.error:
             Debug("makeRequest: Socket error, unable to connect")
             notification(self.name, self.language(32045), 1)                     # 'Socket error, unable to connect'

@@ -85,7 +85,6 @@ class EHPlayer(xbmc.Player):
                     self.total_time = xbmc.Player().getTotalTime()                  # Get total time of media
                     self.is_playing = True                                          # Yes, we are playing media
                     self.is_active = True                                           # Yes, the media is in focus
-                    Debug("self.total_time: " + str(self.total_time))
             else:
                 self.resetVar()
 
@@ -109,9 +108,9 @@ class EHPlayer(xbmc.Player):
 
     def onPlayBackPaused(self):
         Debug("onPlayBackPaused")
-        if self.is_active and self.is_playing:      # Are we realy playing?
+	if self.is_active and self.is_playing:      # Are we really playing?
             self.is_playing = False                 # Okay, then, lets pause
-            self.updateWatched_time()               # Udate the playing time
+	    self.updateWatched_time()               # Update the playing time
             if self.watched_time > 0:
                 Debug("onPlayBackPaused Paused after: " + str(self.watched_time))
 
@@ -296,7 +295,6 @@ player = EHPlayer()
 
 
 player.checkForOldData()
-Debug("OK, lets do this")
 i = 0
 while(not xbmc.abortRequested):
     xbmc.sleep(1000)
@@ -305,5 +303,3 @@ while(not xbmc.abortRequested):
         if i >= 300:
             player.watching()
             i = 0
-
-Debug("The END")
