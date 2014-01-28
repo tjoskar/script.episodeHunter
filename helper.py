@@ -10,12 +10,12 @@ def Debug(msg):
     debug = settings.getSetting("debug")
     if debug:
         try:
-            print _name + ": " + msg
+	    xbmc.log(_name + ": " + msg)
         except Exception:
             try:
-                print _name + ": You are trying to print some bad string, " + msg.encode("utf-8", "ignore")
+		xbmc.log(_name + ": You are trying to print some bad string, " + msg.encode("utf-8", "ignore"))
             except Exception:
-                print _name + ": You are trying to print a bad string, I can not even print it"
+		xbmc.log(_name + ": You are trying to print a bad string, I can not even print it")
 
 
 
