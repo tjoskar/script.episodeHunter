@@ -14,7 +14,7 @@ Version 1.0.0:
        Smaller bug fix
 Version 0.9.9:
        Major sync update
-       Update to API v2
+       Update to API v2r1
 Version 0.9.8:
        Import Time lib to sync_helper
 Version 0.9.7:
@@ -41,7 +41,7 @@ Version 0.3.0:
        Skipp Telnet
        Using xbmc.Player instead
 Version 0.2.1:
-       Update to API r2
+       Update to API v1r2
 Version 0.2.0:
        Alpha testing
 Version 0.1.1:
