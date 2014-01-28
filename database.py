@@ -31,13 +31,11 @@ class Database(object):
                 cur.execute("SELECT id, p FROM parameter LIMIT 1")
             except Exception:
                 Debug("Unable to get table parameter, create the table")
-                print(traceback.format_exc())
 
                 try:
                     cur.execute("CREATE TABLE IF NOT EXISTS 'parameter' (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, p TEXT)")
                 except Exception:
                     Debug("Unable to create table")
-                    print(traceback.format_exc())
             finally:
                 try:
                     cur.close()
@@ -63,7 +61,6 @@ class Database(object):
                 return rows
             except Exception:
                 Debug("Unable to get parameter")
-                print(traceback.format_exc())
             finally:
                 try:
                     cur.close()

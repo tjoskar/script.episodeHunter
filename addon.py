@@ -278,7 +278,6 @@ class EHPlayer(xbmc.Player):
 
             except Exception:
                 Debug("checkForOldData: Unable to loop")
-                print(traceback.format_exc())
 
             success = success.keys()
             if len(success) > 0:
