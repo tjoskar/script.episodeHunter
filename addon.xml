@@ -26,5 +26,7 @@ contact us on info@episodehunter.tv
         <language>en</language>
         <website>http://episodehunter.tv</website>
         <email>info@episodehunter.tv</email>
+        <forum>http://forum.xbmc.org/showthread.php?tid=185881</forum>
+        <source>https://github.com/tjoskar/script.episodeHunter</source>
     </extension>
 </addon>
