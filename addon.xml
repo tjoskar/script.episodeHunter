@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="script.episodehunter" version="1.0.7" name="EpisodeHunter" provider-name="Episodehunter.tv">
+<addon id="script.episodehunter" version="1.0.8" name="EpisodeHunter" provider-name="Episodehunter.tv">
     <requires>
-        <import addon="xbmc.python"              version="2.1.0"/>
-        <import addon="script.module.simplejson" version="2.0.10"/>
+        <import addon="xbmc.python" version="2.1.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py">
     	<provides>video</provides>

@@ -1,3 +1,9 @@
+Version 1.0.8:
+      Refactoring
+        - Removed sqllite.db, the offline database is now created in userdata folder
+        - Moved connection.py, database.py, helper.py, httpconn.py and xbmc_helper.py
+          into resources/lib
+        - Renamed a lot of functions and class names
 Version 1.0.7:
       Replace print statements with xbmc.log()
       Force scrobble when onPlayBackEnded() is called
