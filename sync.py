@@ -37,7 +37,7 @@ def sync_watched_movies(gui=True):
     for movie in xbmc_movies:
         i += 1                                                  # Increase at beginning because of 'continue' and other fancy
         if xbmc.abortRequested:
-            raise SystemExit()                                  # You heard the lady, get out of here!
+            raise SystemExit()
         if gui:
             progress.update(100 / num_movies * i)
             if progress.iscanceled():
@@ -58,7 +58,7 @@ def sync_watched_movies(gui=True):
                 continue
 
             if playcount > 0:                                   # Have the user watch it?
-                if year > 0:                                    # I guess that this movie is newer then Jesus?
+                if year > 0:                                    # I guess that this movie is younger then Jesus?
                     if 'lastplayed' in movie:                   # Do we have a date?
                         if 'originaltitle' in movie:            # It would be great if we have the original title
                             set_as_seen.append({
@@ -162,7 +162,7 @@ def sync_watched_series(gui=True):
         return
 
     if len(eh_tvshows) <= 0:
-        # We will get a lot of errors. BUT we will catch them all (with 'except')
+        # We will get a lot of errors. BUT we will catch them all
         eh_tvshows = {}
 
     if 'tvshows' in xbmc_tvshows:
@@ -178,7 +178,7 @@ def sync_watched_series(gui=True):
     for xbmc_tvshow in xbmc_tvshows:
         i += 1                                                  # Increase at beginning because of 'continue' and other fancy
         if xbmc.abortRequested:
-            raise SystemExit()                                  # You heard the lady, get out of here!
+            raise SystemExit()
         if gui:
             progress.update(100 / number_tvshows * i)
             if progress.iscanceled():
