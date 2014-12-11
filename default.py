@@ -4,11 +4,13 @@ import xbmcgui
 import xbmcaddon
 
 from resources.lib import helper
-import sync
+from resources.lib import sync
+from resources.lib.connection import Connection
 
 __settings__ = xbmcaddon.Addon("script.episodehunter")
 __language__ = __settings__.getLocalizedString
 __title__ = "EpisodeHunter"
+
 
 def menu():
 
@@ -25,9 +27,9 @@ def menu():
             return
         else:
             if select == 0:  # Movie
-                sync.sync_watched_movies(True)
+                sync.Sync(Connection()).movies(True)
             elif select == 1:  # TV
-                sync.sync_watched_series(True)
+                sync.Sync(Connection()).sync_watched_series(True)
             elif select == 2:  # Settings
                 __settings__.openSettings()
 

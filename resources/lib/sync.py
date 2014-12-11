@@ -15,131 +15,150 @@ __language__ = __settings__.getLocalizedString
 __title__ = "EpisodeHunter"
 
 
-def sync_watched_movies(gui=True):
-    if gui:
-        progress = xbmcgui.DialogProgress()
-        progress.create(__title__, __language__(32021))  # "Checking XBMC Database for new watched movies"
+class Sync(object):
+    """ Abstract baseclass for sync """
 
-    connection = Connection()
+    def __init__(self):
+        super(Sync, self).__init__()
 
-    eh_movies = connection.get_watched_movies()
-    xbmc_movies = xbmc_helper.get_movies_from_xbmc()
 
-    if xbmc_movies is None or eh_movies is None:
+class SyncMovies(Sync):
+    """
+    Sync class
+    Two-way sync between xbmc and EH
+    """
+
+    def __init__(self, connection):
+        super(SyncMovies, self).__init__()
+        self.connection = connection
+        self.progress = None
+
+    def movies(self, gui=True):
         if gui:
-            progress.close()
-        return
+            self.progress = xbmcgui.DialogProgress()
+            self.progress.create(__title__, __language__(32021))  # "Checking XBMC Database for new watched movies"
 
-    i = -1                          # Iterator index
-    num_movies = len(xbmc_movies)   # Number of movies in XBMC database
-    set_as_seen = []                # List of movie to set as seen
+        eh_movies = self.connection.get_watched_movies()
+        xbmc_movies = xbmc_helper.get_movies_from_xbmc()
 
-    for movie in xbmc_movies:
-        i += 1                                                  # Increase at beginning because of 'continue' and other fancy
-        if xbmc.abortRequested:
-            raise SystemExit()
-        if gui:
-            progress.update(100 / num_movies * i)
-            if progress.iscanceled():
-                # "Progress Aborted"
-                xbmcgui.Dialog().ok(__title__, __language__(32022))
-                break
-        try:
-            imdb_id = movie['imdbnumber']
-        except KeyError:
-            helper.debug("Skipping a movie - no IMDb ID was found")
-            continue
+        if xbmc_movies is None or eh_movies is None:
+            if gui:
+                self.progress.close()
+            return
 
-        if helper.not_seen_movie(imdb_id, eh_movies):           # Is the movie listed at EpisodeHunter as watched?
+        i = -1                          # Iterator index
+        num_movies = len(xbmc_movies)   # Number of movies in XBMC database
+        set_as_seen = []                # List of movie to set as seen
+
+        for movie in xbmc_movies:
+            # Increase at beginning because of 'continue' and other fancy jumps
+            i += 1
+            if xbmc.abortRequested:
+                raise SystemExit()
+            if gui:
+                self.progress.update(100 / num_movies * i)
+                if self.progress.iscanceled():
+                    # "Progress Aborted"
+                    xbmcgui.Dialog().ok(__title__, __language__(32022))
+                    break
             try:
-                playcount = movie['playcount']
-                year = movie['year']
+                imdb_id = movie['imdbnumber']
             except KeyError:
+                helper.debug("Skipping a movie - no IMDb ID was found")
                 continue
 
-            if playcount > 0:                                   # Have the user watch it?
-                if year > 0:                                    # I guess that this movie is younger then Jesus?
-                    if 'lastplayed' in movie:                   # Do we have a date?
-                        if 'originaltitle' in movie:            # It would be great if we have the original title
-                            set_as_seen.append({
-                                'imdb_id': imdb_id,
-                                'title': movie['originaltitle'],
-                                'year': movie['year'],
-                                'plays': movie['playcount'],
-                                'last_played': int(time.mktime(time.strptime(movie['lastplayed'], '%Y-%m-%d %H:%M:%S')))
-                            })
-                        else:                                   # No original title? Okey, send the 'ordinary' title
-                            set_as_seen.append({
-                                'imdb_id': imdb_id,
-                                'title': movie['title'],
-                                'year': movie['year'],
-                                'plays': movie['playcount'],
-                                'last_played': int(time.mktime(time.strptime(movie['lastplayed'], '%Y-%m-%d %H:%M:%S')))
-                            })
-                    else:                                       # No 'last-play'? :(
-                        if 'originaltitle' in movie:            # It would be great if we have the original title
-                            set_as_seen.append({
-                                'imdb_id': imdb_id,
-                                'title': movie['originaltitle'],
-                                'year': movie['year'],
-                                'plays': movie['playcount']
-                            })
-                        else:                                   # Do we have any data?
-                            try:
+            # Is the movie listed at EpisodeHunter as watched?
+            if helper.not_seen_movie(imdb_id, eh_movies):
+                try:
+                    playcount = movie['playcount']
+                    year = movie['year']
+                except KeyError:
+                    continue
+
+                if playcount > 0:                                   # Have the user watch it?
+                    if year > 0:                                    # I guess that this movie is younger then Jesus?
+                        if 'lastplayed' in movie:                   # Do we have a date?
+                            if 'originaltitle' in movie:            # It would be great if we have the original title
+                                set_as_seen.append({
+                                    'imdb_id': imdb_id,
+                                    'title': movie['originaltitle'],
+                                    'year': movie['year'],
+                                    'plays': movie['playcount'],
+                                    'last_played': int(time.mktime(time.strptime(movie['lastplayed'], '%Y-%m-%d %H:%M:%S')))
+                                })
+                            else:                                   # No original title? Okey, send the 'ordinary' title
                                 set_as_seen.append({
                                     'imdb_id': imdb_id,
                                     'title': movie['title'],
                                     'year': movie['year'],
+                                    'plays': movie['playcount'],
+                                    'last_played': int(time.mktime(time.strptime(movie['lastplayed'], '%Y-%m-%d %H:%M:%S')))
+                                })
+                        else:                                       # No 'last-play'? :(
+                            if 'originaltitle' in movie:            # It would be great if we have the original title
+                                set_as_seen.append({
+                                    'imdb_id': imdb_id,
+                                    'title': movie['originaltitle'],
+                                    'year': movie['year'],
                                     'plays': movie['playcount']
                                 })
-                            except KeyError:
-                                pass
-                else:
-                    helper.debug("Skipping " + movie['title'] + " - The movie is to old")
+                            else:                                   # Do we have any data?
+                                try:
+                                    set_as_seen.append({
+                                        'imdb_id': imdb_id,
+                                        'title': movie['title'],
+                                        'year': movie['year'],
+                                        'plays': movie['playcount']
+                                    })
+                                except KeyError:
+                                    pass
+                    else:
+                        helper.debug("Skipping " + movie['title'] + " - The movie is to old")
 
-    set_as_seen_title = ""
-    for i in range(0, len(set_as_seen)):
-        if i == 0:
-            set_as_seen_title += set_as_seen[i]['title']
-        elif i > 5:
-            set_as_seen_title += ", ..."
-            break
-        else:
-            set_as_seen_title += ", " + set_as_seen[i]['title']
+        set_as_seen_title = ""
+        for i in range(0, len(set_as_seen)):
+            if i == 0:
+                set_as_seen_title += set_as_seen[i]['title']
+            elif i > 5:
+                set_as_seen_title += ", ..."
+                break
+            else:
+                set_as_seen_title += ", " + set_as_seen[i]['title']
 
-    # Set movies as seen on EpisodeHunter:
-    num_seen_movies = len(set_as_seen)
+        # Set movies as seen on EpisodeHunter:
+        num_seen_movies = len(set_as_seen)
+        if num_seen_movies > 0:
+            if gui:
+                # 'Movies will be added as watched on EpisodeHunter'
+                choice = xbmcgui.Dialog().yesno(__title__, str(num_seen_movies) + " " + __language__(32023), set_as_seen_title)
+            else:
+                choice = True
 
-    if num_seen_movies > 0:
-        if gui:
-            # 'Movies will be added as watched on EpisodeHunter'
-            choice = xbmcgui.Dialog().yesno(__title__, str(num_seen_movies) + " " + __language__(32023), set_as_seen_title)
-        else:
-            choice = 0
-
-        if choice == 1 or choice is True:                       # I believe this is OS depending
-            progress.update(50, __language__(32044))            # 'Uploading movies to episodehunter'
-            data = connection.set_movies_watched(set_as_seen)
-
-            if data is None:
-                helper.debug("Error uploading seen movies: response is None")
+            if choice == 1 or choice is True:  # I believe this is OS depending
                 if gui:
-                    xbmcgui.Dialog().ok(__title__, __language__(32024), "")  # 'Error uploading watched movies'
-            elif 'status' in data:
-                if data['status'] == 400:
-                    helper.debug("successfully uploaded seen movies")
-                    if gui:
-                        xbmcgui.Dialog().ok(__title__, __language__(32040))  # 'Movie successfully updated to EpisodeHunter'
-                elif data['status'] == 300:
-                    helper.debug("Error uploading seen movies: " + str(data['data']))
-                    if gui:
-                        xbmcgui.Dialog().ok(__title__, __language__(32024), str(data['data']))  # 'Error uploading watched movies'
-    else:
-        if gui:
-            xbmcgui.Dialog().ok(__title__, __language__(32025))  # 'No new watched movies to update for EpisodeHunter'
+                    self.progress.update(50, __language__(32044))  # 'Uploading movies to episodehunter'
+                data = self.connection.set_movies_watched(set_as_seen)
 
-    if gui:
-        progress.close()
+                if data is None:
+                    helper.debug("Error uploading seen movies: response is None")
+                    if gui:
+                        xbmcgui.Dialog().ok(__title__, __language__(32024), "")  # 'Error uploading watched movies'
+                elif 'status' in data:
+                    if data['status'] == 200:
+                        helper.debug("successfully uploaded seen movies")
+                        if gui:
+                            xbmcgui.Dialog().ok(__title__, __language__(32040))  # 'Movie successfully updated to EpisodeHunter'
+                    elif data['status'] == 300:
+                        helper.debug("Error uploading seen movies: " + str(data['data']))
+                        if gui:
+                            xbmcgui.Dialog().ok(__title__, __language__(32024), str(data['data']))  # 'Error uploading watched movies'
+        else:
+            if gui:
+                xbmcgui.Dialog().ok(__title__, __language__(32025))  # 'No new watched movies to update for EpisodeHunter'
+
+        if gui:
+            self.progress.close()
+
 
 def sync_watched_series(gui=True):
     MAX_SEASON_NUMBER = 50
