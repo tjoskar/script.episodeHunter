@@ -1,4 +1,2 @@
 *.py[cod]
-
-
-resources/tests/
+*.sublime-project
