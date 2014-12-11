@@ -6,20 +6,53 @@ import time
 import xbmc
 import xbmcaddon
 import xbmcgui
-from resources.lib.connection import Connection
+#from resources.lib.connection import Connection
 from resources.lib import xbmc_helper
 from resources.lib import helper
+from resources.lib import progress
+from resources.model import movie_model
 
 __settings__ = xbmcaddon.Addon("script.episodehunter")
 __language__ = __settings__.getLocalizedString
 __title__ = "EpisodeHunter"
 
 
+def movie_creterial(movie):
+    if 'imdbnumber' not in movie:
+        helper.debug("Skipping a movie - no IMDb ID was found")
+        return False
+
+    if 'title' not in movie and 'originaltitle' not in movie:
+        helper.debug("Skipping a movie - title not found")
+        return False
+
+    try:
+        if 'year' not in movie or int(movie['year']) <= 0:
+            helper.debug("Skipping a movie - year not found")
+            return False
+    except ValueError, error:
+        helper.debug('{0}: {1}'.format(error.errno, error.strerror))
+
+    try:
+        if 'playcount' not in movie or int(movie['playcount']) <= 0:
+            return False
+    except ValueError, error:
+        helper.debug('{0}: {1}'.format(error.errno, error.strerror))
+
+    return True
+
 class Sync(object):
     """ Abstract baseclass for sync """
 
     def __init__(self):
         super(Sync, self).__init__()
+        self.progress = None
+
+    def create_progress(self, msg):
+        self.progress = progress.create(msg)
+
+    def quit(self):
+        self.progress.close()
 
 
 class SyncMovies(Sync):
@@ -32,14 +65,58 @@ class SyncMovies(Sync):
         super(SyncMovies, self).__init__()
         self.connection = connection
         self.progress = None
+        self.upstream_sync = []
+        self.downstream_sync = []
+        self.eh_watched_movies = None
+        self.xbmc_watched_movies = None
+
+    def sync(self):
+        self.create_progress(__language__(32021))  # "Checking XBMC Database for new watched movies"
+        self._get_movies_to_sync_upstream()
+        self._get_movies_to_sync_downstream()
+        self._sync()
+        self.quit()
+
+    def _sync(self):
+        if len(self.upstream_sync) > 0:
+            self.connection.set_movies_watched(self.upstream_sync)
+
+    def _get_movies_to_sync_upstream(self):
+        self._get_watched_movies()
+        num_movies = len(self.xbmc_watched_movies)
+        self.upstream_sync = []
+        for i, m in enumerate(self.xbmc_watched_movies):
+            self.progress.update(100 / num_movies * i)
+            if not movie_creterial(m):
+                continue
+            if self._movie_already_synced(m['imdbnumber']):
+                continue
+            self.upstream_sync.append(movie_model.create_from_xbmc(m))
+        # self.upstream_sync = filter(movie_creterial, self.xbmc_watched_movies)
+        # self.upstream_sync = [m for m in self.upstream_sync if not self._movie_already_synced(m['imdbnumber'])]
+        # self.upstream_sync = map(movie_model.create_from_xbmc, self.upstream_sync)
+
+    def _get_movies_to_sync_downstream(self):
+        pass
+
+    def _movie_already_synced(self, imdb):
+        for movie in self.eh_watched_movies:
+            if imdb == movie['imdb_id']:
+                return True
+        return False
+
+    def _get_watched_movies(self):
+        self.eh_watched_movies = self.connection.get_watched_movies()
+        self.xbmc_watched_movies = xbmc_helper.get_movies_from_xbmc()
+        if self.eh_watched_movies is None:
+            self.eh_watched_movies = []
+        if self.xbmc_watched_movies is None:
+            self.xbmc_watched_movies = []
+
+
+
 
     def movies(self, gui=True):
-        if gui:
-            self.progress = xbmcgui.DialogProgress()
-            self.progress.create(__title__, __language__(32021))  # "Checking XBMC Database for new watched movies"
-
-        eh_movies = self.connection.get_watched_movies()
-        xbmc_movies = xbmc_helper.get_movies_from_xbmc()
 
         if xbmc_movies is None or eh_movies is None:
             if gui:
@@ -158,6 +235,7 @@ class SyncMovies(Sync):
 
         if gui:
             self.progress.close()
+
 
 
 def sync_watched_series(gui=True):

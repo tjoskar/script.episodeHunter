@@ -1,4 +1,5 @@
 from mock import patch, Mock
+import unittest
 
 from xbmc_base_test_case import XbmcBaseTestCase
 from test_data import eh_movie_result, xbmc_movie_result
@@ -32,8 +33,8 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.Sync(connection)
-        sync.movies(False)
+        sync = self.sync.SyncMovies(connection)
+        sync.sync()
 
         # Assert
         movie_to_upload = connection.called['set_movies_watched'][0]
@@ -52,13 +53,13 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.Sync(connection)
-        sync.movies(False)
+        sync = self.sync.SyncMovies(connection)
+        sync.sync()
 
         # Assert
         movie_to_upload = connection.called['set_movies_watched'][0]
 
-        self.assertEqual(len(movie_to_upload), 2, 'Should have uploaded one movie')
+        self.assertEqual(len(movie_to_upload), 2, 'Should have uploaded two movies')
         self.assertEqual(len(connection.called['set_movies_watched']), 1, 'set_movies_watched should have been called once')
 
     @patch('resources.lib.xbmc_helper.get_movies_from_xbmc')
@@ -72,13 +73,13 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.Sync(connection)
-        sync.movies(False)
+        sync = self.sync.SyncMovies(connection)
+        sync.sync()
 
         # Assert
         movie_to_upload = connection.called['set_movies_watched'][0]
 
-        self.assertEqual(movie_to_upload[0]['title'], 'Battleship', 'Should have uploaded Battleship')
+        self.assertEqual(movie_to_upload[0].title, 'Battleship', 'Should have uploaded Battleship')
 
     @patch('resources.lib.xbmc_helper.get_movies_from_xbmc')
     def test_shuld_close_progressbar_when_result_is_none(self, xbmc_helper_mock):
@@ -86,8 +87,8 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         connection.get_watched_movies.return_value = None
         xbmc_helper_mock.return_value = None
 
-        sync = self.sync.Sync(connection)
-        sync.movies(True)
+        sync = self.sync.SyncMovies(connection)
+        sync.sync()
 
         self.progress.close.assert_called_once_with()
 
@@ -95,5 +96,4 @@ class GivenMovieSync(XbmcBaseTestCase, object):
 
 
 if __name__ == '__main__':
-    import unittest
     unittest.main()
