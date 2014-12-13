@@ -1,3 +1,5 @@
+import copy
+
 MOVIES = [
     {
         'imdbnumber': 'tt1392170',
@@ -25,7 +27,14 @@ MOVIES = [
 
 
 def get(*args, **kargs):
-    return_list = [x for x in MOVIES if x['title'] in args]
+    """
+    Returning a list of movies according to xbmc's model
+    :rtype : list
+    :param args:str names of movies
+    :param kargs:list   remove_attr, list of attr to remove
+    :return: list
+    """
+    return_list = [copy.copy(x) for x in MOVIES if x['title'] in args]
 
     if 'remove_attr' in kargs:
         return_list = [{i: m[i] for i in m if i not in kargs['remove_attr']} for m in return_list]
