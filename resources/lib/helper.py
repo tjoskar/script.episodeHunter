@@ -6,12 +6,23 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
+from resources.exceptions import SettingsExceptions
+
 __name__ = "EpisodeHunter"
+settings = xbmcaddon.Addon("script.episodehunter")
+language = settings.getLocalizedString
+
+
+def get_username():
+    return settings.getSetting("username")
+
+
+def get_api_key():
+    return settings.getSetting("api_key")
 
 
 def debug(msg):
     """ Prints debug message if debugging is enable in the user settings """
-    settings = xbmcaddon.Addon("script.episodehunter")
     is_debuging = settings.getSetting("debug")
     if is_debuging:
         try:
@@ -28,17 +39,28 @@ def notification(header, message, level=0):
     Create a notification and show it in 5 sec
     If debugging is enable in the user settings or the level is 0
     """
-    settings = xbmcaddon.Addon("script.episodehunter")
     is_debuging = settings.getSetting("debug")
     if is_debuging or level == 0:
         xbmc.executebuiltin("XBMC.Notification(%s,%s,%i,%s)" % (header, message, 5000, settings.getAddonInfo("icon")))
 
 
+def check_user_credentials():
+    """
+    Make a local check of the user credentials
+    May raise SettingsExceptions
+    :rtype : bool
+    """
+    if get_username() == "" and get_api_key() == "":
+        raise SettingsExceptions(language(32014))
+    elif settings.getSetting("username") == "":
+        raise SettingsExceptions(language(32012))
+    elif settings.getSetting("api_key") == "":
+        raise SettingsExceptions(language(32013))
+    return True
+
+
 def is_settings_okey(daemon=False, silent=False):
     """ Check if we have username and api key? """
-    settings = xbmcaddon.Addon("script.episodehunter")
-    language = settings.getLocalizedString
-
     if settings.getSetting("username") == "" and settings.getSetting("api_key") == "":
         if silent:
             return False
@@ -74,6 +96,12 @@ def not_seen_movie(imdb, array):
         if imdb == x['imdb_id']:
             return False
     return True
+
+def seen_movie(imdb, array_of_movies):
+    for movie in array_of_movies:
+        if imdb == movie['imdb_id']:
+            return True
+    return False
 
 
 def seen_episode(e, array):
