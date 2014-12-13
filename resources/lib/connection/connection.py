@@ -4,16 +4,14 @@ Makes all HTTP request to episodehunter.tv
 """
 
 import json
-from resources.lib.connection.http import Http
-from resources import config
 from resources.lib import helper
 
 
 class Connection(object):
     """ Makes all HTTP request to episodehunter.tv """
 
-    def __init__(self):
-        self.__connection = Http(config.__BASE_URL__)
+    def __init__(self, http):
+        self.__connection = http
 
     def make_request(self, api_endpoint, args=None):
         """ Send message """
