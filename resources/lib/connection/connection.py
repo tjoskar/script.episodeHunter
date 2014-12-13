@@ -24,7 +24,7 @@ class Connection(object):
         args['username'] = helper.get_username()
         args['apikey'] = helper.get_api_key()
 
-        json_data = json.dumps(args)
+        json_data = json.dumps(args, default=lambda o: o.__dict__)
 
         return self.__connection.make_request(api_endpoint, json_data)
 
