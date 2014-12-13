@@ -12,8 +12,6 @@ class Database(object):
     """ A helper class for the database """
 
     def __init__(self, db_file):
-        con = None
-        cur = None
         self.__db_file = db_file
 
         con = lite.connect(self.__db_file)
@@ -31,7 +29,6 @@ class Database(object):
         finally:
             cur.close()
             con.close()
-        return None
 
     def get_all(self):
         """ Get all rows from the offline database """
