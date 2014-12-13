@@ -10,6 +10,7 @@ import xbmc
 import xbmcaddon
 from httpconn import HTTPConn
 import helper
+from resources.exceptions import ConnectionExceptions
 
 
 class Connection(object):
@@ -18,8 +19,6 @@ class Connection(object):
     def __init__(self):
         self.__settings = xbmcaddon.Addon("script.episodehunter")
         self.__language = self.__settings.getLocalizedString
-        self.__name = "EpisodeHunter"
-        self.__url = "api.episodehunter.tv"
         self.__connection = None
 
     def _make_connection(self):
@@ -32,35 +31,28 @@ class Connection(object):
             helper.notification(self.__name, self.__language(32038), 1)
             self.__connection = None
 
-    def make_request(self, request, args={}):
+    def make_request(self, request, args=None):
         """ Send message """
+        args = args or {}
 
-        # Must have username as wall as apikey
-        if self.__settings.getSetting("username") == "" or self.__settings.getSetting("api_key") == "":
-            return None
+        helper.check_user_credentials()
 
-        # Create an connection
+        # Create a connection
         self._make_connection()
         if self.__connection is None:
             helper.debug("Unable to connect")
-            return None
+            raise ConnectionExceptions
 
-        try:
-            args['username'] = self.__settings.getSetting("username")
-            args['apikey'] = self.__settings.getSetting("api_key")
-
-            jdata = json.dumps(args)
-        except Exception:
-            return None
+        args['username'] = helper.get_username()
+        args['apikey'] = helper.get_api_key()
+        json_data = json.dumps(args)
 
         # Create the request
         try:
-            self.__connection.request(request, jdata)
+            self.__connection.request(request, json_data)
         except socket.error:
             helper.debug("make_request: Socket error, unable to connect")
-            # 'Socket error, unable to connect'
-            helper.notification(self.__name, self.__language(32045), 1)
-            return None
+            raise ConnectionExceptions(helper.language(32045))  # 'Socket error, unable to connect'
 
         # And off we go
         try:
