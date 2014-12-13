@@ -16,10 +16,11 @@ class GivenMovieSync(XbmcBaseTestCase, object):
 
     def setUp(self):
         super(GivenMovieSync, self).setUp()
-        import resources.lib.sync as sync
+        import resources.lib.sync.sync_movies as sync
         self.sync = sync
 
         self.progress = Mock()
+        self.progress.iscanceled.return_value = False
         self.xbmcgui.DialogProgress = Mock(return_value=self.progress)
 
     @patch('resources.lib.xbmc_helper.get_movies_from_xbmc')
@@ -33,7 +34,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.SyncMovies(connection)
+        sync = self.sync.Movies(connection)
         sync.sync()
 
         # Assert
@@ -53,7 +54,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.SyncMovies(connection)
+        sync = self.sync.Movies(connection)
         sync.sync()
 
         # Assert
@@ -73,7 +74,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.xbmc.abortRequested = False
 
         # Act
-        sync = self.sync.SyncMovies(connection)
+        sync = self.sync.Movies(connection)
         sync.sync()
 
         # Assert
@@ -81,18 +82,6 @@ class GivenMovieSync(XbmcBaseTestCase, object):
 
         self.assertEqual(movie_to_upload[0].title, 'Battleship', 'Should have uploaded Battleship')
 
-    @patch('resources.lib.xbmc_helper.get_movies_from_xbmc')
-    def test_shuld_close_progressbar_when_result_is_none(self, xbmc_helper_mock):
-        connection = Mock()
-        connection.get_watched_movies.return_value = None
-        xbmc_helper_mock.return_value = None
-
-        sync = self.sync.SyncMovies(connection)
-        sync.sync()
-
-        self.progress.close.assert_called_once_with()
-
-        self.assertTrue(True)
 
 
 if __name__ == '__main__':
