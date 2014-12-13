@@ -9,7 +9,8 @@ class ConnectionMock(object):
     def get_watched_movies(self):
         return self.watched_movies
 
-    def set_movies_watched(self, movies_seen=[]):
+    def set_movies_watched(self, movies_seen=None):
+        movies_seen = movies_seen or []
         self._increase_called('set_movies_watched', movies_seen)
         return self._return()
 
