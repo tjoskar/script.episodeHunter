@@ -114,7 +114,7 @@ msgid "Progress Aborted"
 msgstr ""
 
 msgctxt "#32023"
-msgid "Movies will be added as watched on EpisodeHunter"
+msgid "Movies will be marked as watched on EpisodeHunter"
 msgstr ""
 
 msgctxt "#32024"
@@ -209,4 +209,12 @@ msgstr ""
 
 msgctxt "#32046"
 msgid "Check username and password"
+msgstr ""
+
+msgctxt "#32047"
+msgid "Movies will be marked as watched in xbmc"
+msgstr ""
+
+msgctxt "#32048"
+msgid "Setting movies as seen in xbmc"
 msgstr ""
