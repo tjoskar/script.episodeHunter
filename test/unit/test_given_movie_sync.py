@@ -30,7 +30,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games', 'Battleship')
         sync.progress = self.progress
 
@@ -45,7 +45,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games')
         sync.progress = self.progress
 
@@ -60,7 +60,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games')
         sync.progress = self.progress
 
@@ -77,7 +77,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games') + xbmc_movie_result.get('The Thing', remove_attr='year')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games') + xbmc_movie_result.get('The Thing', remove_attr='year')
         sync.eh_watched_movies = []
         sync.progress = self.progress
 
@@ -92,7 +92,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
     def test_should_rise_exception_when_abort_is_requested(self):
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games')
         sync.eh_watched_movies = []
         sync.progress = self.progress
         self.xbmc.abortRequested = True
@@ -103,7 +103,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
     def test_should_rise_exception_when_canceled_is_requested(self):
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_watched_movies = xbmc_movie_result.get('The Hunger Games')
+        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games')
         sync.eh_watched_movies = []
         self.progress.iscanceled.return_value = True
         sync.progress = self.progress
