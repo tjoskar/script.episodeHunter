@@ -2,6 +2,12 @@ import time
 
 
 def create_from_xbmc(xbmc_movie):
+    """
+    Creating a movie model bast on xbmc model
+    :rtype : Movie
+    :param xbmc_movie: dic
+    :return: Movie model
+    """
     model = Movie()
     model.imdb_id = xbmc_movie['imdbnumber']
     model.title = xbmc_movie['originaltitle'] if 'originaltitle' in xbmc_movie else xbmc_movie['title']
