@@ -9,9 +9,10 @@ from resources.exceptions import UserAbortExceptions
 class Sync(object):
     """ Abstract baseclass for sync """
 
-    def __init__(self):
+    def __init__(self, connection):
         super(Sync, self).__init__()
         self.progress = None
+        self.connection = connection
 
     @staticmethod
     def ask_user_yes_or_no(*lines):
