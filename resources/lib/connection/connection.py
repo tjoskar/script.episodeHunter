@@ -47,7 +47,16 @@ class Connection(object):
 
     def watching_movie(self, originaltitle, year, imdb_id, duration, percent):
         """ Set a movie as watching on episodehunter.tv """
-        return self.make_request('/v2/movie/watching', {'originaltitle': originaltitle, 'year': year, 'imdb_id': imdb_id, 'duration': duration, 'progress': percent})
+        return self.make_request(
+            '/v2/movie/watching',
+            {
+                'originaltitle': originaltitle,
+                'year': year,
+                'imdb_id': imdb_id,
+                'duration': duration,
+                'progress': percent
+            }
+        )
 
     def watching_episode(self, tvdb_id, title, year, season, episode, duration, percent):
         """ Set a episode as watching on episodehunter.tv """
