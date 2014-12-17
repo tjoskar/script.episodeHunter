@@ -13,6 +13,10 @@ settings = xbmcaddon.Addon("script.episodehunter")
 language = settings.getLocalizedString
 
 
+def get_addon_resource_path(path):
+    return xbmc.translatePath(settings.getAddonInfo('profile') + path)
+
+
 def get_username():
     return settings.getSetting("username")
 
@@ -118,8 +122,19 @@ def is_not_in(test, array):
     return True
 
 
-def to_seconds(timestr):
+def xbmc_time_to_seconds(timestr):
     seconds = 0
     for part in timestr.split(':'):
         seconds = seconds * 60 + int(part)
     return seconds
+
+
+def convert_str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    elif not isinstance(value, str):
+        return None
+    elif value == 'true':
+        return True
+    elif value == 'false':
+        return False
