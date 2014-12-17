@@ -8,10 +8,23 @@ import xbmc
 import xbmcaddon
 from resources.lib import helper
 from resources.lib import xbmc_helper
+from resources.lib import user
 from resources.lib.database import Database
 from resources.lib.connection import Connection
 from resources.lib.connection import Http
 from resources import config
+
+
+def is_movie(media):
+    return 'type' in media and media['type'] == 'movie'
+
+
+def is_episode(media):
+    return 'type' in media and media['type'] == 'episode'
+
+
+def is_media(media):
+    return media is not None and 'type' in media and 'id' in media
 
 
 class EHPlayer(xbmc.Player):
@@ -23,24 +36,18 @@ class EHPlayer(xbmc.Player):
     __is_active = False          # True if pause || playing
     __valid_user = True          # Is the settings OK?
     __offline = False            # Are we offline?
-    __scrobble_movie = True      # Should we scrobble movies?
-    __scrobble_episode = True    # Should we scrobble TV-shows?
     __media = None               # Current media
     __db = None                  # Database object
     __connection = None          # Connection object
-    __settings = None            # User settings object
-    __language = None
-    __name = "EpisodeHunter"
 
     def __init__(self):
         xbmc.Player.__init__(self)
-        self.reset_var() # Only to get the settings variable
-        db_path = xbmc.translatePath(self.__settings.getAddonInfo('profile') + "/offline.db")
+        db_path = helper.get_addon_resource_path('/offline.db')
         self.__db = Database(db_path)
         self.__connection = Connection(Http(config.__BASE_URL__))
 
     def reset_var(self):
-        """ Reset all values to there default """
+        """ Reset all values to there defaults """
         self.is_playing = False
         self.__current_video = None
         self.__total_time = 0
@@ -48,63 +55,39 @@ class EHPlayer(xbmc.Player):
         self.__is_active = False
         self.__valid_user = True
         self.__offline = False
-        self.__scrobble_movie = True
-        self.__scrobble_episode = True
         self.__media = None
-
-        # Reload settings
-        self.__settings = xbmcaddon.Addon("script.episodehunter")
-        self.__language = self.__settings.getLocalizedString
-
-        offline_option = self.__settings.getSetting("offline")
-        scrobble_movie_option = self.__settings.getSetting("scrobble_movie")
-        scrobble_episode_option = self.__settings.getSetting("scrobble_episode")
-
-        if offline_option == 'true':
-            self.__offline = True
-        if scrobble_movie_option == 'false':
-            self.__scrobble_movie = False
-        if scrobble_episode_option == 'false':
-            self.__scrobble_episode = False
 
     def onPlayBackStarted(self):
         """
-        This function is only running once
-        (every time when a user starts a movie/TV-show)
+        Will be called when xbmc starts playing a file.
         """
         helper.debug("onPlayBackStarted")
-        self.reset_var()              # Reset all variables
-        self.check_user(silent=False) # Check if we have the user-data we need
+        self.reset_var()
+        self.check_user(silent=False)  # Check if we have the user-data we need
 
         # Do we actually play a video
         if xbmc.Player().isPlayingVideo():
             player_id = xbmc_helper.get_active_players_from_xbmc()
             self.__current_video = xbmc_helper.get_currently_playing_from_xbmc(player_id)
-            if self.__current_video is not None:
-                if 'type' in self.__current_video and 'id' in self.__current_video:
+            if is_media(self.__current_video):
+                if not xbmc.Player().isPlayingVideo():
+                    return None
 
-                    if not xbmc.Player().isPlayingVideo():
-                        helper.debug("What? Not playing anymore")
-                        return None
+                if is_movie(self.__current_video):
+                    self.__media = xbmc_helper.get_movie_details_from_xbmc(self.__current_video['id'])
 
-                    # If it's a movie; try to find IMDB id
-                    if self.__current_video['type'] == 'movie':
-                        # self.movie_IMDB = xbmc.xbmc.Player().getVideoInfoTag().getIMDBNumber()
-                        self.__media = xbmc_helper.get_movie_details_from_xbmc(self.__current_video['id'], ['year', 'imdbnumber', 'originaltitle'])
+                elif is_episode(self.__current_video):
+                    self.__media = xbmc_helper.get_episode_details_from_xbmc(self.__current_video['id'])
+                    if self.__media is None:
+                        # Did not find current episode
+                        return
+                    series_match = xbmc_helper.get_show_details_from_xbmc(self.__media['tvshowid'])
+                    self.__media['imdbnumber'] = series_match['imdbnumber']
+                    self.__media['year'] = series_match['year']
 
-                    elif self.__current_video['type'] == 'episode':
-                        match = xbmc_helper.get_episode_details_from_xbmc(self.__current_video['id'], ['tvshowid', 'showtitle', 'season', 'episode'])
-                        if match is None:
-                            # Did not find current episode
-                            return
-                        self.__media = match
-                        show_match = xbmc_helper.get_show_details_from_xbmc(match['tvshowid'], ['imdbnumber', 'year'])
-                        self.__media['imdbnumber'] = show_match['imdbnumber']
-                        self.__media['year'] = show_match['year']
-
-                    self.__total_time = xbmc.Player().getTotalTime() # Get total time of media
-                    self.is_playing = True                           # Yes, we are playing media
-                    self.__is_active = True                          # Yes, the media is in focus
+                self.__total_time = xbmc.Player().getTotalTime()
+                self.is_playing = True
+                self.__is_active = True
             else:
                 self.reset_var()
 
@@ -119,21 +102,19 @@ class EHPlayer(xbmc.Player):
         helper.debug("onPlayBackStopped")
         if self.__is_active:
             helper.debug("onPlayBackStopped Stopped after: " + str(self.__watched_time))
-            if self.__current_video is None:  # If the current_video is None, something is wrong
+            if is_media(self.__current_video):  # If the current_video is None, something is wrong
                 self.reset_var()
                 return None
-
-            if 'type' in self.__current_video and 'id' in self.__current_video:
-                self.scrobble()
+            self.scrobble()
 
             self.reset_var()
 
     def onPlayBackPaused(self):
         """ On pause """
         helper.debug("onPlayBackPaused")
-        if self.__is_active and self.is_playing: # Are we really playing?
-            self.is_playing = False              # Okay then, lets pause
-            self.update_watched_time()           # Update the playing time
+        if self.__is_active and self.is_playing:  # Are we really playing?
+            self.is_playing = False               # Okay then, lets pause
+            self.update_watched_time()            # Update the playing time
 
     def onPlayBackResumed(self):
         """ On resumed """
@@ -145,7 +126,7 @@ class EHPlayer(xbmc.Player):
 
     def update_watched_time(self):
         """ Update the time a user has watch an episode/move """
-        self.__watched_time = helper.to_seconds(str(xbmc.getInfoLabel("Player.Time")))
+        self.__watched_time = helper.xbmc_time_to_seconds(str(xbmc.getInfoLabel("Player.Time")))
 
     def watching(self):
         """ This functions is called continuously, see below """
@@ -154,52 +135,39 @@ class EHPlayer(xbmc.Player):
 
             self.update_watched_time()
 
-            responce = None
+            if not self.__valid_user or self.__offline:
+                return None
 
-            if self.__current_video['type'] == 'movie' and self.__scrobble_movie and self.__valid_user and not self.__offline:
-                try:
-                    responce = self.__connection.watching_movie(
-                        self.__media['originaltitle'],
-                        self.__media['year'],
-                        self.__media['imdbnumber'],
-                        self.__total_time / 60,
-                        int(100 * self.__watched_time / self.__total_time))
-                except Exception:
-                    helper.debug("watching: Error movie transmit")
-
-            elif self.__current_video['type'] == 'episode' and self.__scrobble_episode and self.__valid_user and not self.__offline:
-                try:
-                    responce = self.__connection.watching_episode(
-                        self.__media['imdbnumber'],
-                        self.__media['showtitle'],
-                        self.__media['year'],
-                        self.__media['season'],
-                        self.__media['episode'],
-                        self.__total_time / 60,
-                        int(100 * self.__watched_time / self.__total_time))
-                except Exception:
-                    helper.debug("watching: Error episode transmit")
-
-            if responce is not None:
-                helper.debug("watching: Watch response: " + str(responce))
-                if 'status' in responce:
-                    if responce['status'] == 403:
-                        self.__valid_user = False
-                    if responce['status'] != 200:
-                        # If the user settings are wrong, this message is only shown when a user start playing media
-                        helper.notification(self.__name, self.__language(32018) + ": " + str(responce['data']))  # 'Error:'
-            else:
-                helper.debug("watching: responce is None :(")
+            if is_movie(self.__current_video) and user.scrobble_movies():
+                self.communicate_with_eh(
+                    self.__connection.watching_movie,
+                    self.__media['originaltitle'],
+                    self.__media['year'],
+                    self.__media['imdbnumber'],
+                    self.__total_time / 60,
+                    int(100 * self.__watched_time / self.__total_time)
+                )
+            elif is_episode(self.__current_video) and user.scrobble_episodes():
+                self.communicate_with_eh(
+                    self.__connection.watching_episode,
+                    self.__media['imdbnumber'],
+                    self.__media['showtitle'],
+                    self.__media['year'],
+                    self.__media['season'],
+                    self.__media['episode'],
+                    self.__total_time / 60,
+                    int(100 * self.__watched_time / self.__total_time)
+                )
 
     def stop_watching(self):
         """ Tell episodehunter.tv that we have stop watching """
         helper.debug("stoppedWatching")
 
         if self.__valid_user and not self.__offline:
-            if self.__current_video['type'] == 'movie' and self.__scrobble_movie:
-                self.__connection.cancel_watching_movie()
-            elif self.__current_video['type'] == 'episode' and self.__scrobble_episode:
-                self.__connection.cancel_watching_episode()
+            if is_movie(self.__current_video) and user.scrobble_movies():
+                self.communicate_with_eh(self.__connection.cancel_watching_movie)
+            elif is_episode(self.__current_video) and self.__scrobble_episode:
+                self.communicate_with_eh(self.__connection.cancel_watching_episode)
 
     def scrobble(self):
         """ Scrobble a movie / episode """
@@ -261,6 +229,12 @@ class EHPlayer(xbmc.Player):
         else:
             self.stop_watching()
 
+    def communicate_with_eh(self, method, *args):
+        try:
+            method(*args)
+        except Exception:
+            pass
+
     def check_for_old_data(self):
         """ Check the database for old offline data """
         helper.debug("check_for_old_data")
@@ -302,7 +276,7 @@ class EHPlayer(xbmc.Player):
                 self.__db.remove_rows(success)
 
     def check_user(self, silent):
-        """ Check if the user settings is correct """
+        """ Check if the user-settings are correct """
         # Check if we have the user-data we need.
         if not helper.is_settings_okey(daemon=True, silent=silent):
             self.__valid_user = False
