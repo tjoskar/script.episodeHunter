@@ -10,6 +10,8 @@ from resources.lib import helper
 from resources.lib import xbmc_helper
 from resources.lib.database import Database
 from resources.lib.connection import Connection
+from resources.lib.connection import Http
+from resources import config
 
 
 class EHPlayer(xbmc.Player):
@@ -35,7 +37,7 @@ class EHPlayer(xbmc.Player):
         self.reset_var() # Only to get the settings variable
         db_path = xbmc.translatePath(self.__settings.getAddonInfo('profile') + "/offline.db")
         self.__db = Database(db_path)
-        self.__connection = Connection()
+        self.__connection = Connection(Http(config.__BASE_URL__))
 
     def reset_var(self):
         """ Reset all values to there default """
