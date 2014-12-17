@@ -1,6 +1,9 @@
 import json
+
 import xbmc
 import helper
+from resources.model import movie_model
+from resources.model.movie_model import Movie
 
 
 def execute_rpc(**kargs):
@@ -102,9 +105,18 @@ def get_movie_details_from_xbmc_by_title(title, year, fields):
         return None
 
 
-def get_movie_details_from_xbmc(library_id, fields):
-    """ Get a single movie from xbmc given the id """
-    result = execute_rpc(method='VideoLibrary.GetMovieDetails', params={'movieid': library_id, 'properties': fields}, id=1)
+def get_movie_details_from_xbmc(library_id):
+    """
+    Get a single movie from xbmc given id
+    :param library_id:int
+    :rtype : dict
+    """
+    result = execute_rpc(
+        method='VideoLibrary.GetMovieDetails',
+        params={
+            'movieid': library_id,
+            'properties': ['year', 'imdbnumber', 'originaltitle']
+        }, id=1)
 
     try:
         return result['moviedetails']
@@ -112,8 +124,18 @@ def get_movie_details_from_xbmc(library_id, fields):
         return None
 
 
-def get_episode_details_from_xbmc(library_id, fields):
-    result = execute_rpc(method='VideoLibrary.GetEpisodeDetails', params={'episodeid': library_id, 'properties': fields}, id=1)
+def get_episode_details_from_xbmc(library_id):
+    """
+    Get a single movie from xbmc given id
+    :param library_id:int
+    :rtype : dict
+    """
+    result = execute_rpc(
+        method='VideoLibrary.GetEpisodeDetails',
+        params={
+            'episodeid': library_id,
+            'properties': ['tvshowid', 'showtitle', 'season', 'episode']
+        }, id=1)
 
     try:
         return result['episodedetails']
@@ -121,8 +143,13 @@ def get_episode_details_from_xbmc(library_id, fields):
         return None
 
 
-def get_show_details_from_xbmc(library_id, fields):
-    result = execute_rpc(method='VideoLibrary.GetTVShowDetails', params={'tvshowid': library_id, 'properties': fields}, id=1)
+def get_show_details_from_xbmc(library_id):
+    result = execute_rpc(
+        method='VideoLibrary.GetTVShowDetails',
+        params={
+            'tvshowid': library_id,
+            'properties': ['imdbnumber', 'year']
+        }, id=1)
 
     try:
         return result['tvshowdetails']
