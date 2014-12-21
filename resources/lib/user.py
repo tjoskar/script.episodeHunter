@@ -23,3 +23,7 @@ def scrobble_movies():
 
 def scrobble_episodes():
     return helper.convert_str_to_bool(settings.getSetting('scrobble_episode'))
+
+
+def scrobble_min_view_time():
+    return settings.getSetting("scrobble_min_view_time")
