@@ -5,10 +5,11 @@ Background process
 import time
 import json
 import xbmc
-import xbmcaddon
+from resources.exceptions import SettingsExceptions, ConnectionExceptions
 from resources.lib import helper
 from resources.lib import xbmc_helper
 from resources.lib import user
+from resources.lib.gui import dialog
 from resources.lib.database import Database
 from resources.lib.connection import Connection
 from resources.lib.connection import Http
@@ -81,6 +82,7 @@ class EHPlayer(xbmc.Player):
                     if self.__media is None:
                         # Did not find current episode
                         return
+
                     series_match = xbmc_helper.get_show_details_from_xbmc(self.__media['tvshowid'])
                     self.__media['imdbnumber'] = series_match['imdbnumber']
                     self.__media['year'] = series_match['year']
@@ -102,11 +104,10 @@ class EHPlayer(xbmc.Player):
         helper.debug("onPlayBackStopped")
         if self.__is_active:
             helper.debug("onPlayBackStopped Stopped after: " + str(self.__watched_time))
-            if is_media(self.__current_video):  # If the current_video is None, something is wrong
+            if not is_media(self.__current_video):
                 self.reset_var()
                 return None
             self.scrobble()
-
             self.reset_var()
 
     def onPlayBackPaused(self):
@@ -120,7 +121,7 @@ class EHPlayer(xbmc.Player):
         """ On resumed """
         helper.debug("onPlayBackResumed")
         # Have the user update his user setting while pausing?
-        self.check_user(silent=True)
+        self.check_user(silent=False)
         if self.__is_active:
             self.is_playing = True
 
@@ -141,22 +142,22 @@ class EHPlayer(xbmc.Player):
             if is_movie(self.__current_video) and user.scrobble_movies():
                 self.communicate_with_eh(
                     self.__connection.watching_movie,
-                    self.__media['originaltitle'],
-                    self.__media['year'],
-                    self.__media['imdbnumber'],
-                    self.__total_time / 60,
-                    int(100 * self.__watched_time / self.__total_time)
+                    originaltitle=self.__media['originaltitle'],
+                    year=self.__media['year'],
+                    imdb_id=self.__media['imdbnumber'],
+                    duration=self.__total_time / 60,
+                    percent=int(100 * self.__watched_time / self.__total_time)
                 )
             elif is_episode(self.__current_video) and user.scrobble_episodes():
                 self.communicate_with_eh(
                     self.__connection.watching_episode,
-                    self.__media['imdbnumber'],
-                    self.__media['showtitle'],
-                    self.__media['year'],
-                    self.__media['season'],
-                    self.__media['episode'],
-                    self.__total_time / 60,
-                    int(100 * self.__watched_time / self.__total_time)
+                    tvdb_id=self.__media['imdbnumber'],
+                    title=self.__media['showtitle'],
+                    year=self.__media['year'],
+                    season=self.__media['season'],
+                    episode=self.__media['episode'],
+                    duration=self.__total_time / 60,
+                    percent=int(100 * self.__watched_time / self.__total_time)
                 )
 
     def stop_watching(self):
@@ -173,67 +174,55 @@ class EHPlayer(xbmc.Player):
         """ Scrobble a movie / episode """
         helper.debug("scrobble")
 
-        scrobble_min_view_time_option = self.__settings.getSetting("scrobble_min_view_time")
+        scrobble_min_view_time_option = user.scrobble_min_view_time()
 
         if (self.__watched_time / self.__total_time) * 100 >= float(scrobble_min_view_time_option):
-            responce = None
-            if self.__current_video['type'] == 'movie' and self.__scrobble_movie:
-                try:
-                    arg = {}
-                    arg['method'] = 'scrobble_movie'
-                    arg['parameter'] = {'originaltitle': self.__media['originaltitle'],
-                                        'year': self.__media['year'],
-                                        'imdb_id': self.__media['imdbnumber'],
-                                        'duration': self.__total_time / 60,
-                                        'percent': int(100 * self.__watched_time / self.__total_time),
-                                        'timestamp': int(time.time())}
-
-                    if self.__offline or not self.__valid_user:
-                        self.__db.write(arg)
-                        return None
-
-                    responce = self.__connection.scrobble_movie(**arg['parameter'])
-
-                except Exception:
-                    helper.debug("scrobble: Something went wrong (movie)")
-
-            elif self.__current_video['type'] == 'episode' and self.__scrobble_episode:
-                try:
-                    arg = {}
-                    arg['method'] = 'scrobble_episode'
-                    arg['parameter'] = {'tvdb_id': self.__media['imdbnumber'],
-                                        'title': self.__media['showtitle'],
-                                        'year': self.__media['year'],
-                                        'season': self.__media['season'],
-                                        'episode': self.__media['episode'],
-                                        'duration': self.__total_time / 60,
-                                        'percent': int(100 * self.__watched_time / self.__total_time),
-                                        'timestamp': int(time.time())}
-
-                    if self.__offline or not self.__valid_user:
-                        self.__db.write(arg)
-                        return None
-
-                    responce = self.__connection.scrobble_episode(**arg['parameter'])
-
-                except Exception, e:
-                    print e
-                    helper.debug("scrobble: Something went wrong (episode)")
-
-            if responce is None or ('status' in responce and responce['status'] != 200):
-                self.__db.write(arg)
-                return None
-            else:
-                helper.debug("Scrobble responce: " + str(responce))
-
+            if is_movie(self.__current_video) and user.scrobble_movies():
+                self.communicate_with_eh(
+                    self.__connection.scrobble_movie,
+                    originaltitle=self.__media['originaltitle'],
+                    year=self.__media['year'],
+                    imdb_id=self.__media['imdbnumber'],
+                    duration=self.__total_time / 60,
+                    percent=int(100 * self.__watched_time / self.__total_time),
+                    timestamp=int(time.time())
+                )
+            elif is_episode(self.__current_video) and self.__scrobble_episode:
+                self.communicate_with_eh(
+                    self.__connection.scrobble_episode,
+                    tvdb_id=self.__media['imdbnumber'],
+                    title=self.__media['showtitle'],
+                    year=self.__media['year'],
+                    season=self.__media['season'],
+                    episode=self.__media['episode'],
+                    duration=self.__total_time / 60,
+                    percent=int(100 * self.__watched_time / self.__total_time),
+                    timestamp=int(time.time())
+                )
         else:
             self.stop_watching()
 
-    def communicate_with_eh(self, method, *args):
+    def communicate_with_eh(self, method, *args, **kargs):
+        if self.__offline:
+            self.save_method_call_in_db(method, **kargs)
+            return
+
         try:
-            method(*args)
-        except Exception:
-            pass
+            method(*args, **kargs)
+        except SettingsExceptions as error:
+            self.__offline = True
+            self.__valid_user = False
+            dialog.create_notification(error.value)
+        except ConnectionExceptions as error:
+            self.__offline = True
+            dialog.create_notification(error.value)
+
+    def save_method_call_in_db(self, method, **kargs):
+        methods_to_save = ['scrobble_movie', 'scrobble_episode']
+        if method.__name__ in methods_to_save:
+            
+
+
 
     def check_for_old_data(self):
         """ Check the database for old offline data """
