@@ -2,8 +2,6 @@ import json
 
 import xbmc
 import helper
-from resources.model import movie_model
-from resources.model.movie_model import Movie
 
 
 def execute_rpc(**kargs):
