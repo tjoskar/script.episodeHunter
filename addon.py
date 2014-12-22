@@ -58,13 +58,24 @@ class EHPlayer(xbmc.Player):
         self.__offline = False
         self.__media = None
 
+    def run(self):
+        self.check_for_old_data()
+        i = 0
+        while not xbmc.abortRequested:
+            xbmc.sleep(1000)
+            if self.is_playing:
+                i += 1
+                if i >= 300:
+                    self.watching()
+                    i = 0
+
     def onPlayBackStarted(self):
         """
         Will be called when xbmc starts playing a file.
         """
         helper.debug("onPlayBackStarted")
         self.reset_var()
-        self.check_user(silent=False)  # Check if we have the user-data we need
+        self.check_user()  # Check if we have the user-data we need
 
         # Do we actually play a video
         if xbmc.Player().isPlayingVideo():
@@ -121,7 +132,7 @@ class EHPlayer(xbmc.Player):
         """ On resumed """
         helper.debug("onPlayBackResumed")
         # Have the user update his user setting while pausing?
-        self.check_user(silent=False)
+        self.check_user()
         if self.__is_active:
             self.is_playing = True
 
@@ -210,7 +221,6 @@ class EHPlayer(xbmc.Player):
         try:
             method(*args, **kargs)
         except SettingsExceptions as error:
-            self.__offline = True
             self.__valid_user = False
             dialog.create_notification(error.value)
         except ConnectionExceptions as error:
@@ -220,67 +230,40 @@ class EHPlayer(xbmc.Player):
     def save_method_call_in_db(self, method, **kargs):
         methods_to_save = ['scrobble_movie', 'scrobble_episode']
         if method.__name__ in methods_to_save:
-            
+            kargs['method'] = method.__name__
+            self.__db.write(kargs)
 
-
-
-    def check_for_old_data(self):
+    def sync_offline_data(self):
         """ Check the database for old offline data """
-        helper.debug("check_for_old_data")
+        helper.debug("sync_offline_data")
+
+        if user.offline():
+            return
 
         success = []
+        rows = self.__db.get_all()
 
-        if not self.__offline:
-            rows = self.__db.get_all()
+        if rows is None or not rows:
+            return None
 
-            if rows is None or not rows:
-                helper.debug("check_for_old_data: No rows")
-                return None
+        for row in rows:
+            data = json.loads(row[1])
 
             try:
-                for row in rows:
-                    try:
-                        data = json.loads(row[1])
-                    except Exception:
-                        helper.debug("check_for_old_data: unable to convert string to json: " + str(row[1]))
-                        continue
+                getattr(self.__connection, data['method'])(**data['parameter'])
+            except SettingsExceptions as error:
+                self.__valid_user = False
+                dialog.create_notification(error.value)
+                break
+            except ConnectionExceptions:
+                success.append(row[0])
 
-                    try:
-                        helper.debug('Make the call')
-                        responce = getattr(self.__connection, data['method'])(**data['parameter'])
-                        if responce is None or ('status' in responce and responce['status'] != 200):
-                            helper.debug("check_for_old_data: Unable to get responce. m: " + str(data['method']) + " p: " + str(data['parameter']))
-                            break
-                        else:
-                            success.append(row[0])
-                    except Exception:
-                        helper.debug("Unable to call function: " + str(data))
-                        success.append(row[0])
+        if len(success) > 0:
+            self.__db.remove_rows(success)
 
-            except Exception:
-                helper.debug("check_for_old_data: Unable to loop")
-
-            if len(success) > 0:
-                helper.debug("Remove id: " + str(success))
-                self.__db.remove_rows(success)
-
-    def check_user(self, silent):
-        """ Check if the user-settings are correct """
-        # Check if we have the user-data we need.
-        if not helper.is_settings_okey(daemon=True, silent=silent):
+    def check_user(self):
+        """ Check if we have all the user-settings that we need """
+        if not helper.is_settings_okey(daemon=True, silent=False):
             self.__valid_user = False
         else:
             self.__valid_user = True
-
-
-player = EHPlayer()
-
-player.check_for_old_data()
-i = 0
-while not xbmc.abortRequested:
-    xbmc.sleep(1000)
-    if player.is_playing:
-        i += 1
-        if i >= 300:
-            player.watching()
-            i = 0
