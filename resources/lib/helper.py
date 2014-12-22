@@ -65,7 +65,9 @@ def check_user_credentials():
 
 def is_settings_okey(daemon=False, silent=False):
     """ Check if we have username and api key? """
-    if settings.getSetting("username") == "" and settings.getSetting("api_key") == "":
+    try:
+        return check_user_credentials()
+    except SettingsExceptions:
         if silent:
             return False
         elif daemon:
@@ -73,26 +75,6 @@ def is_settings_okey(daemon=False, silent=False):
         else:
             xbmcgui.Dialog().ok(__name__, language(32014))
         return False
-
-    elif settings.getSetting("username") == "":
-        if silent:
-            return False
-        if daemon:
-            notification(__name__, language(32012))
-        else:
-            xbmcgui.Dialog().ok(__name__, language(32012))
-        return False
-
-    elif settings.getSetting("api_key") == "":
-        if silent:
-            return False
-        if daemon:
-            notification(__name__, language(32013))
-        else:
-            xbmcgui.Dialog().ok(__name__, language(32013))
-        return False
-
-    return True
 
 
 def not_seen_movie(imdb, array):
