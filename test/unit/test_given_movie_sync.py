@@ -56,7 +56,23 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         upstream = sync.upstream_sync
         self.assertEqual(len(upstream), 2)
 
-    def test_should_return_two_specific_movies(self):
+    def test_should_only_sync_movies_upstream_if_playcount(self):
+        # Arrange
+        connection = connection_mock.ConnectionMock()
+        sync = self.sync.Movies(connection)
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Thing')
+        sync.xbmc_movies[0].plays = 0
+        sync.eh_watched_movies = []
+        sync.progress = self.progress
+
+        # Act
+        sync.get_movies_to_sync_upstream()
+
+        # Assert
+        upstream = sync.upstream_sync
+        self.assertEqual(len(upstream), 1)
+
+    def test_should_sync_two_specific_movies_upstream(self):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
