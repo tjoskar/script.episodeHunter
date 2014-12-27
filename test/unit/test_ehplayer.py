@@ -1,5 +1,6 @@
 from mock import patch, Mock
 import unittest
+import json
 
 from test.xbmc_base_test_case import XbmcBaseTestCase
 from test.mocks import xbmc_mock
