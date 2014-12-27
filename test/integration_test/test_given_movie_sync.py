@@ -1,9 +1,9 @@
 from mock import patch, Mock
 import unittest
 
-from ..xbmc_base_test_case import XbmcBaseTestCase
-from ..test_data import eh_movie_result, xbmc_movie_result
-from ..mocks import connection_mock
+from test.xbmc_base_test_case import XbmcBaseTestCase
+from test.test_data import eh_movie_result, xbmc_movie_result
+from test.mocks import connection_mock
 
 
 class GivenMovieSync(XbmcBaseTestCase, object):

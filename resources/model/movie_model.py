@@ -1,5 +1,11 @@
 import time
 
+def get_key(obj, key, default=None):
+    if key in obj:
+        return obj[key]
+    else:
+        return default
+
 
 def create_from_xbmc(xbmc_movie):
     """
@@ -9,10 +15,10 @@ def create_from_xbmc(xbmc_movie):
     :return: Movie model
     """
     model = Movie()
-    model.imdb_id = xbmc_movie['imdbnumber']
+    model.imdb_id = get_key(xbmc_movie, 'imdbnumber')
     model.title = xbmc_movie['originaltitle'] if 'originaltitle' in xbmc_movie else xbmc_movie['title']
-    model.year = xbmc_movie['year']
-    model.plays = xbmc_movie['playcount'] if 'playcount' in xbmc_movie else -1
+    model.year = get_key(xbmc_movie, 'year')
+    model.plays = get_key(xbmc_movie, 'playcount', -1)
     model.last_played = int(time.mktime(time.strptime(xbmc_movie['lastplayed'], '%Y-%m-%d %H:%M:%S'))) if 'lastplayed' in xbmc_movie else int(time.time())
     return model
 

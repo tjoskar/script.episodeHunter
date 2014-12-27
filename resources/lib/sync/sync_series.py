@@ -3,10 +3,10 @@ Sync watched Movies/TV shows to Episodehunter
 """
 
 import copy
+import sync
 from resources.exceptions import UserAbortExceptions, ConnectionExceptions, SettingsExceptions
 from resources.lib import xbmc_helper
 from resources.lib import helper
-from resources.lib import sync
 from resources.lib.gui import dialog
 from resources.model import series_model
 

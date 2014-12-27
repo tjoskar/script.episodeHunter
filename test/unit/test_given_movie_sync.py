@@ -5,7 +5,7 @@ from test.xbmc_base_test_case import XbmcBaseTestCase
 from test.test_data import eh_movie_result, xbmc_movie_result
 from test.mocks import connection_mock
 from resources.exceptions import UserAbortExceptions
-
+from resources.model import movie_model
 
 class GivenMovieSync(XbmcBaseTestCase, object):
     """
@@ -30,7 +30,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games', 'Battleship')
         sync.progress = self.progress
 
@@ -45,7 +45,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games')
         sync.progress = self.progress
 
@@ -60,7 +60,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games', 'The Thing', 'Battleship')
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Thing', 'Battleship')
         sync.eh_watched_movies = eh_movie_result.get('The Hunger Games')
         sync.progress = self.progress
 
@@ -73,26 +73,10 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.assertIn(upstream[1].title, ['The Thing', 'Battleship'])
         self.assertNotEqual(upstream[0].title, upstream[1].title)
 
-    def test_should_not_include_movies_that_do_not_have_all_attributes(self):
-        # Arrange
-        connection = connection_mock.ConnectionMock()
-        sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games') + xbmc_movie_result.get('The Thing', remove_attr='year')
-        sync.eh_watched_movies = []
-        sync.progress = self.progress
-
-        # Act
-        sync.get_movies_to_sync_upstream()
-
-        # Assert
-        upstream = sync.upstream_sync
-        self.assertEqual(len(upstream), 1)
-        self.assertEqual(upstream[0].title, 'The Hunger Games')
-
     def test_should_rise_exception_when_abort_is_requested(self):
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games')
+        sync.xbmc_movies = [movie_model.Movie()]
         sync.eh_watched_movies = []
         sync.progress = self.progress
         self.xbmc.abortRequested = True
@@ -103,7 +87,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
     def test_should_rise_exception_when_canceled_is_requested(self):
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get('The Hunger Games')
+        sync.xbmc_movies = [movie_model.Movie()]
         sync.eh_watched_movies = []
         self.progress.iscanceled.return_value = True
         sync.progress = self.progress
@@ -147,11 +131,11 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         result = self.sync.movie_criteria(movie)
         self.assertFalse(result)
 
-    def test_should_return_false_if_movie_has_play_count_but_its_zero(self):
+    def test_should_return_true_if_movie_has_play_count_event_if_its_zero(self):
         movie = xbmc_movie_result.get('The Hunger Games')[0]
         movie['playcount'] = 0
         result = self.sync.movie_criteria(movie)
-        self.assertFalse(result)
+        self.assertTrue(result)
 
 
 

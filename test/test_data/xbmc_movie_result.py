@@ -1,4 +1,5 @@
 import copy
+from resources.model import movie_model
 
 MOVIES = [
     {
@@ -39,3 +40,7 @@ def get(*args, **kargs):
     if 'remove_attr' in kargs:
         return_list = [{i: m[i] for i in m if i not in kargs['remove_attr']} for m in return_list]
     return return_list
+
+
+def get_as_model(*args, **kargs):
+    return [movie_model.create_from_xbmc(m) for m in get(*args, **kargs)]

@@ -92,7 +92,7 @@ class Movies(Sync):
         return False
 
     def get_movies(self):
-        self.eh_watched_movies = self.connection.get_movies()
+        self.eh_watched_movies = self.connection.get_watched_movies()
         xbmc_movies = xbmc_helper.get_movies_from_xbmc()
         self.xbmc_movies = [movie_model.create_from_xbmc(m) for m in xbmc_movies if movie_criteria(m)]
 
