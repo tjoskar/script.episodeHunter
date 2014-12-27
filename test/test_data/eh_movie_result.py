@@ -11,6 +11,14 @@ MOVIES = [
         'imdb_id': 'tt0905372',
         'plays': '1',
         'title': 'The Thing'
+    }, {
+        'imdb_id': 'tt2788710',
+        'plays': '1',
+        'title': 'The Interview'
+    }, {
+        'imdb_id': 'tt0816692',
+        'plays': '1',
+        'title': 'Interstellar'
     }
 ]
 

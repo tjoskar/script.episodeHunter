@@ -23,6 +23,18 @@ MOVIES = [
         'title': 'The Thing',
         'year': '2011',
         'lastplayed': '2014-12-01 22:03:31'
+    }, {
+        'imdbnumber': 'tt2788710',
+        'playcount': '0',
+        'originaltitle': 'The Interview',
+        'title': 'The Interview',
+        'year': '2014'
+    }, {
+        'imdbnumber': 'tt0816692',
+        'playcount': '0',
+        'originaltitle': 'Interstellar',
+        'title': 'Interstellar',
+        'year': '2014'
     }
 ]
 
