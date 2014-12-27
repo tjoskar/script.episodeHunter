@@ -26,7 +26,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.progress.iscanceled.return_value = False
         self.xbmcgui.DialogProgress = Mock(return_value = self.progress)
 
-    def test_should_return_one_movie(self):
+    def test_should_sync_one_movie_upstream(self):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
@@ -41,7 +41,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         upstream = sync.upstream_sync
         self.assertEqual(len(upstream), 1)
 
-    def test_should_return_two_movies(self):
+    def test_should_sync_two_movies_upstream(self):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
