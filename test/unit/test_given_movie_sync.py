@@ -60,8 +60,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         # Arrange
         connection = connection_mock.ConnectionMock()
         sync = self.sync.Movies(connection)
-        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Thing')
-        sync.xbmc_movies[0].plays = 0
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('Interstellar', 'The Hunger Games')
         sync.eh_watched_movies = []
         sync.progress = self.progress
 
@@ -87,6 +86,68 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         upstream = sync.upstream_sync
         self.assertIn(upstream[0].title, ['The Thing', 'Battleship'])
         self.assertIn(upstream[1].title, ['The Thing', 'Battleship'])
+        self.assertNotEqual(upstream[0].title, upstream[1].title)
+
+    def test_should_sync_one_movie_downstream(self):
+        # Arrange
+        connection = connection_mock.ConnectionMock()
+        sync = self.sync.Movies(connection)
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Interview', 'Interstellar')
+        sync.eh_watched_movies = eh_movie_result.get('The Interview')
+        sync.progress = self.progress
+
+        # Act
+        sync.get_movies_to_sync_downstream()
+
+        # Assert
+        downstream = sync.downstream_sync
+        self.assertEqual(len(downstream), 1)
+
+    def test_should_sync_two_movies_downstream(self):
+        # Arrange
+        connection = connection_mock.ConnectionMock()
+        sync = self.sync.Movies(connection)
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Interview', 'Interstellar')
+        sync.eh_watched_movies = eh_movie_result.get('The Interview', 'Interstellar')
+        sync.progress = self.progress
+
+        # Act
+        sync.get_movies_to_sync_downstream()
+
+        # Assert
+        downstream = sync.downstream_sync
+        self.assertEqual(len(downstream), 2)
+
+    def test_should_only_sync_movies_downstream_if_playcount(self):
+        # Arrange
+        connection = connection_mock.ConnectionMock()
+        sync = self.sync.Movies(connection)
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'The Interview')
+        sync.eh_watched_movies = eh_movie_result.get('The Interview')
+        sync.progress = self.progress
+
+        # Act
+        sync.get_movies_to_sync_downstream()
+
+        # Assert
+        upstream = sync.downstream_sync
+        self.assertEqual(len(upstream), 1)
+
+    def test_should_sync_two_specific_movies_downstream(self):
+        # Arrange
+        connection = connection_mock.ConnectionMock()
+        sync = self.sync.Movies(connection)
+        sync.xbmc_movies = xbmc_movie_result.get_as_model('The Hunger Games', 'Interstellar', 'The Interview')
+        sync.eh_watched_movies = eh_movie_result.get('The Hunger Games', 'Interstellar', 'The Interview')
+        sync.progress = self.progress
+
+        # Act
+        sync.get_movies_to_sync_downstream()
+
+        # Assert
+        upstream = sync.downstream_sync
+        self.assertIn(upstream[0].title, ['Interstellar', 'The Interview'])
+        self.assertIn(upstream[1].title, ['Interstellar', 'The Interview'])
         self.assertNotEqual(upstream[0].title, upstream[1].title)
 
     def test_should_rise_exception_when_abort_is_requested(self):
