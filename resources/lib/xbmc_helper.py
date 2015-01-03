@@ -117,7 +117,7 @@ def get_movie_details_from_xbmc(library_id):
         method='VideoLibrary.GetMovieDetails',
         params={
             'movieid': library_id,
-            'properties': ['year', 'imdbnumber', 'originaltitle']
+            'properties': ['year', 'imdbnumber', 'originaltitle', 'movieid']
         }, id=1)
 
     try:
@@ -168,8 +168,14 @@ def set_movies_as_watched(movies):
     Set movies as watched
     :param movies: list of Movies
     """
-    for m in movies:
-        set_movie_as_watched(m.id)
+    movies_rpc = [{
+                      'jsonrpc': '2.0',
+                      'method': 'VideoLibrary.SetMovieDetails',
+                      'params': {'movieid': m.xbmc_id, 'playcount': 1},
+                      'id': i
+                  } for i, m in enumerate(movies)]
+
+    map(xbmc_rpc, helper.chunks(movies_rpc, 50))
 
 
 def set_series_as_watched(series):
