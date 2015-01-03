@@ -37,57 +37,62 @@ class Series(sync.Sync):
             self.create_error_dialog(helper.language(32018), error.value)  # "Error"
         except SystemExit:
             pass
-        except Exception, error:
-            self.create_error_dialog(helper.language(32018), error.message)  # "Error"
+        except Exception as error:
+            self.create_error_dialog(helper.language(32018), str(error))  # "Error"
 
         self.quit()
 
     def _sync(self):
-        num_sync_upstream = len(self.upstream_sync)
-        num_sync_downstream = len(self.downstream_sync)
+        num_sync_upstream = sum(len(e.episodes) for e in self.upstream_sync)
+        num_sync_downstream = sum(len(e.episodes) for e in self.downstream_sync)
 
-        if num_sync_upstream > 0 and self.ask_user_yes_or_no(str(num_sync_upstream) + " " + helper.language(32023)):  # 'Movies will be added as watched on EpisodeHunter'
-            self.progress_update(50, helper.language(32044))  # "Uploading movies to EpisodeHunter"
-            # self.connection.set_shows_watched(self.upstream_sync)
-            self.create_ok_dialog(helper.language(32040))  # "Movie successfully updated at EpisodeHunter"
+        if num_sync_upstream > 0 and self.ask_user_yes_or_no(str(num_sync_upstream) + " " + helper.language(32031)):  # 'episodes will be marked as watched on episodehunter.tv'
+            self.progress_update(50, helper.language(32043))  # "Uploading shows to episodehunter.tv"
+            self.connection.set_shows_watched(self.upstream_sync)
+            self.create_ok_dialog(helper.language(32032))  # "Episodes successfully updated at EpisodeHunter"
 
-        if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32047)):  # 'Movies will be marked as watched in xbmc'
+        if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32049)):  # 'episode will be marked as watched in xbmc':
             self.progress_update(75, helper.language(32048))  # "Setting movies as seen in xbmc"
-            xbmc_helper.set_movies_as_watched(self.downstream_sync)
+            xbmc_helper.set_series_as_watched(self.downstream_sync)
+
+        if num_sync_upstream == 0 and num_sync_downstream == 0:
+            dialog.create_ok(helper.language(32050))
 
     def get_series_to_sync_upstream(self):
-        xbmc_series = copy.copy(self.xbmc_series)
+        xbmc_series = copy.deepcopy(self.xbmc_series)
         num_series = len(xbmc_series)
         self.upstream_sync = []
-        for i, tvdb_id in enumerate(xbmc_series.keys()):
-            show = xbmc_series[tvdb_id]
+        for i, show in enumerate(xbmc_series):
             assert isinstance(show, series_model.Series)
             self.progress.update(50 / num_series * i)
             if self.is_canceled():
                 break
-            if show.plays <= 0:
-                del xbmc_series[tvdb_id]
+            show.episodes = [
+                e for e in show.episodes
+                if not self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays >= 0
+            ]
+            if len(show.episodes) == 0:
                 continue
-            show.episodes = [e for e in show.episodes if not self.episode_set_as_seen_on_eh(show.tvdb_id, e.season, e.episode)]
             self.upstream_sync.append(show)
 
     def get_series_to_sync_downstream(self):
-        xbmc_series = copy.copy(self.xbmc_series)
+        xbmc_series = copy.deepcopy(self.xbmc_series)
         num_series = len(xbmc_series)
         self.downstream_sync = []
-        for i, tvdb_id in enumerate(xbmc_series.keys()):
-            show = xbmc_series[tvdb_id]
+        for i, show in enumerate(xbmc_series):
             assert isinstance(show, series_model.Series)
             self.progress.update(50 / num_series * i + 50)
             if self.is_canceled():
                 break
-            if show.plays > 0:
-                del xbmc_series[tvdb_id]
+            show.episodes = [
+                e for e in show.episodes
+                if self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays == 0
+            ]
+            if len(show.episodes) == 0:
                 continue
-            show.episodes = [e for e in show.episodes if self.episode_set_as_seen_on_eh(show.tvdb_id, e.season, e.episode)]
             self.downstream_sync.append(show)
 
-    def episode_set_as_seen_on_eh(self, series_id, season, episode):
+    def is_marked_as_watched_on_eh(self, series_id, season, episode):
         """
         Check if a movie has been set as watched on EH
         :rtype : bool
@@ -144,7 +149,7 @@ def series_criteria(tvshow, episodes):
     except ValueError:
         return False
 
-    if 'playcount' not in movie:
+    if 'playcount' not in tvshow:
         return False
 
     if not all(['season' in e and 'episode' in e and 'playcount' in e for e in episodes]):
