@@ -35,8 +35,8 @@ class Movies(Sync):
             self.create_error_dialog(helper.language(32018), error.value)  # "Error"
         except SystemExit:
             pass
-        except Exception, error:
-            self.create_error_dialog(helper.language(32018), error.message)  # "Error"
+        except Exception as error:
+            self.create_error_dialog(helper.language(32018), str(error))  # "Error"
 
         self.quit()
 
@@ -51,6 +51,9 @@ class Movies(Sync):
         if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32047)):  # 'Movies will be marked as watched in xbmc'
             self.progress_update(75, helper.language(32048))  # "Setting movies as seen in xbmc"
             xbmc_helper.set_movies_as_watched(self.downstream_sync)
+
+        if num_sync_upstream == 0 and num_sync_downstream == 0:
+            dialog.create_ok(helper.language(32050))
 
     def get_movies_to_sync_upstream(self):
         num_movies = len(self.xbmc_movies)
