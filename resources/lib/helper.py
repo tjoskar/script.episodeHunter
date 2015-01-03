@@ -25,6 +25,12 @@ def get_api_key():
     return settings.getSetting("api_key")
 
 
+def chunks(l, n):
+    """ Yield successive n-sized chunks from l """
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
+
+
 def debug(msg):
     """ Prints debug message if debugging is enable in the user settings """
     is_debuging = settings.getSetting("debug")

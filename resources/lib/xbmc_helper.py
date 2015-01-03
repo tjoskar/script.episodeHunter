@@ -2,15 +2,11 @@ import json
 
 import xbmc
 import helper
+from resources.model.series_model import Series
 
 
-def execute_rpc(**kargs):
-    """
-    :rtype : dict
-    """
-    kargs['jsonrpc'] = '2.0'
-    rpc_cmd = json.dumps(kargs)
-
+def xbmc_rpc(arg):
+    rpc_cmd = json.dumps(arg)
     result = xbmc.executeJSONRPC(rpc_cmd)
     result = json.loads(result)
 
@@ -18,7 +14,15 @@ def execute_rpc(**kargs):
         helper.debug('execute_rpc: ' + str(result['error']))
         return None
 
-    return result['result']
+    return result
+
+
+def execute_rpc(**kargs):
+    """
+    :rtype : dict
+    """
+    kargs['jsonrpc'] = '2.0'
+    return xbmc_rpc(kargs)['result']
 
 
 def get_active_players_from_xbmc():
@@ -86,7 +90,7 @@ def get_seasons_from_xbmc(tvshow):
 def get_episodes_from_xbmc(tvshow, season):
     if 'tvshowid' not in tvshow:
         return None
-    result = execute_rpc(method='VideoLibrary.GetEpisodes', params={'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode']}, id=1)
+    result = execute_rpc(method='VideoLibrary.GetEpisodes', params={'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode', 'season']}, id=1)
 
     try:
         return result['episodes']
@@ -166,3 +170,17 @@ def set_movies_as_watched(movies):
     """
     for m in movies:
         set_movie_as_watched(m.id)
+
+
+def set_series_as_watched(series):
+    episodes = []
+    for s in series:
+        assert isinstance(s, Series)
+        episodes = episodes + [{
+                'jsonrpc': '2.0',
+                'method': 'VideoLibrary.SetEpisodeDetails',
+                'params': {'episodeid': e.xbmc_id, 'playcount': 1},
+                'id': i
+            } for i, e in enumerate(s.episodes)]
+
+    map(xbmc_rpc, helper.chunks(episodes, 50))
