@@ -1,4 +1,4 @@
-from mock import patch, Mock
+from mock import Mock
 import unittest
 import json
 
@@ -20,8 +20,8 @@ class GivenEHPlayer(XbmcBaseTestCase, object):
     def setUp(self):
         super(GivenEHPlayer, self).setUp()
         self.xbmc = xbmc_mock
-        import addon
-        self.addon = addon
+        import resources.lib.eh_player
+        self.addon = resources.lib.eh_player
 
     def test_should_return_true_if_movie(self):
         data = {'type': 'movie'}
