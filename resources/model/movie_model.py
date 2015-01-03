@@ -15,17 +15,22 @@ def create_from_xbmc(xbmc_movie):
     :return: Movie model
     """
     model = Movie()
+    model.xbmc_id = xbmc_movie['movieid']
     model.imdb_id = get_key(xbmc_movie, 'imdbnumber')
     model.title = xbmc_movie['originaltitle'] if 'originaltitle' in xbmc_movie else xbmc_movie['title']
     model.year = get_key(xbmc_movie, 'year')
     model.plays = int(get_key(xbmc_movie, 'playcount', -1))
-    model.last_played = int(time.mktime(time.strptime(xbmc_movie['lastplayed'], '%Y-%m-%d %H:%M:%S'))) if 'lastplayed' in xbmc_movie else int(time.time())
+    if 'lastplayed' not in xbmc_movie or xbmc_movie['lastplayed'] == '':
+        model.last_played = ''
+    else:
+        model.last_played = int(time.mktime(time.strptime(xbmc_movie['lastplayed'], '%Y-%m-%d %H:%M:%S')))
     return model
 
 
 class Movie(object):
     """ Movie model """
 
+    xbmc_id = None
     imdb_id = None
     title = None
     year = None
