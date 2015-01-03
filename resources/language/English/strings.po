@@ -146,7 +146,7 @@ msgid "Checking XBMC Database for new watched Episodes"
 msgstr ""
 
 msgctxt "#32031"
-msgid "Episodes will be added as watched"
+msgid "episodes will be marked as watched on episodehunter.tv"
 msgstr ""
 
 msgctxt "#32032"
@@ -212,9 +212,17 @@ msgid "Check username and password"
 msgstr ""
 
 msgctxt "#32047"
-msgid "Movies will be marked as watched in xbmc"
+msgid "movies will be marked as watched in xbmc"
 msgstr ""
 
 msgctxt "#32048"
 msgid "Setting movies as seen in xbmc"
+msgstr ""
+
+msgctxt "#32049"
+msgid "episode will be marked as watched in xbmc"
+msgstr ""
+
+msgctxt "#32050"
+msgid "Your library is up to date. Nothing to sync"
 msgstr ""
