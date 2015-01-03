@@ -47,7 +47,6 @@ class Movies(Sync):
         if num_sync_upstream > 0 and self.ask_user_yes_or_no(str(num_sync_upstream) + " " + helper.language(32023)):  # 'Movies will be added as watched on EpisodeHunter'
             self.progress_update(50, helper.language(32044))  # "Uploading movies to EpisodeHunter"
             self.connection.set_movies_watched(self.upstream_sync)
-            self.create_ok_dialog(helper.language(32040))  # "Movie successfully updated at EpisodeHunter"
 
         if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32047)):  # 'Movies will be marked as watched in xbmc'
             self.progress_update(75, helper.language(32048))  # "Setting movies as seen in xbmc"

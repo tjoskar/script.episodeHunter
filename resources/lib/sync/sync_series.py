@@ -49,7 +49,6 @@ class Series(sync.Sync):
         if num_sync_upstream > 0 and self.ask_user_yes_or_no(str(num_sync_upstream) + " " + helper.language(32031)):  # 'episodes will be marked as watched on episodehunter.tv'
             self.progress_update(50, helper.language(32043))  # "Uploading shows to episodehunter.tv"
             self.connection.set_shows_watched(self.upstream_sync)
-            self.create_ok_dialog(helper.language(32032))  # "Episodes successfully updated at EpisodeHunter"
 
         if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32049)):  # 'episode will be marked as watched in xbmc':
             self.progress_update(75, helper.language(32048))  # "Setting movies as seen in xbmc"
