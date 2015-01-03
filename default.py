@@ -28,8 +28,7 @@ def menu():
             if select == 0:  # Movie
                 sync.Movies(connection).sync()
             elif select == 1:  # TV
-                # sync.Sync(Connection()).sync_watched_series(True)
-                raise Exception
+                sync.Series(connection).sync()
             elif select == 2:  # Settings
                 helper.settings.openSettings()
 
