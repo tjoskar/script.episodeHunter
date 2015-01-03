@@ -11,7 +11,10 @@ def create_from_xbmc(xbmc_series, episodes):
     model.year = xbmc_series['year']
     model.tvdb_id = xbmc_series['imdbnumber']
     model.plays = xbmc_series['playcount']
-    model.episodes = [Episode(e['season'], e['episode'], e['playcount']) for e in episodes]
+    model.episodes = [
+        Episode(e['season'], e['episode'], e['playcount'], e['episodeid'])
+        for season in episodes for e in season
+    ]
     return model
 
 
@@ -31,9 +34,11 @@ class Episode(object):
     season = None
     episode = None
     plays = None
+    xbmc_id = None
 
-    def __init__(self, season, episode, plays):
+    def __init__(self, season, episode, plays, xbmc_id):
         super(Episode, self).__init__()
         self.season = season
         self.episode = episode
         self.plays = plays
+        self.xbmc_id = xbmc_id
