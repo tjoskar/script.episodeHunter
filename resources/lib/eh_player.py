@@ -174,7 +174,7 @@ class EHPlayer(xbmc.Player):
         if self.__valid_user and not self.__offline:
             if is_movie(self.__current_video) and user.scrobble_movies():
                 self.communicate_with_eh(self.__connection.cancel_watching_movie)
-            elif is_episode(self.__current_video) and self.__scrobble_episode:
+            elif is_episode(self.__current_video) and user.scrobble_episodes():
                 self.communicate_with_eh(self.__connection.cancel_watching_episode)
 
     def scrobble(self):
@@ -194,7 +194,7 @@ class EHPlayer(xbmc.Player):
                     percent=int(100 * self.__watched_time / self.__total_time),
                     timestamp=int(time.time())
                 )
-            elif is_episode(self.__current_video) and self.__scrobble_episode:
+            elif is_episode(self.__current_video) and user.scrobble_episodes():
                 self.communicate_with_eh(
                     self.__connection.scrobble_episode,
                     tvdb_id=self.__media['imdbnumber'],
