@@ -3,6 +3,7 @@ from resources.model import movie_model
 
 MOVIES = [
     {
+        'movieid': '1',
         'imdbnumber': 'tt1392170',
         'playcount': '3',
         'originaltitle': 'The Hunger Games',
@@ -10,6 +11,7 @@ MOVIES = [
         'year': '2011',
         'lastplayed': '2014-10-10 20:03:31'
     }, {
+        'movieid': '2',
         'imdbnumber': 'tt1440129',
         'playcount': '1',
         'originaltitle': 'Battleship',
@@ -17,6 +19,7 @@ MOVIES = [
         'year': '2011',
         'lastplayed': '1989-09-27 11:20:31'
     }, {
+        'movieid': '3',
         'imdbnumber': 'tt0905372',
         'playcount': '1',
         'originaltitle': 'The Thing',
@@ -24,12 +27,14 @@ MOVIES = [
         'year': '2011',
         'lastplayed': '2014-12-01 22:03:31'
     }, {
+        'movieid': '4',
         'imdbnumber': 'tt2788710',
         'playcount': '0',
         'originaltitle': 'The Interview',
         'title': 'The Interview',
         'year': '2014'
     }, {
+        'movieid': '5',
         'imdbnumber': 'tt0816692',
         'playcount': '0',
         'originaltitle': 'Interstellar',

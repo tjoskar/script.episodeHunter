@@ -32,7 +32,7 @@ class GivenConnection(XbmcBaseTestCase, object):
 
         self.connection.set_movies_watched(movies)
 
-        self.http.make_request.assert_called_once_with('/v2/movie/watched', '{"username": "username", "movies": [{"plays": 3, "title": "The Hunger Games", "year": "2011", "last_played": 1412964211, "imdb_id": "tt1392170"}], "apikey": "key"}')
+        self.http.make_request.assert_called_once_with('/v2/movie/watched', '{"username": "username", "movies": [{"plays": 3, "last_played": 1412964211, "title": "The Hunger Games", "xbmc_id": "1", "imdb_id": "tt1392170", "year": "2011"}], "apikey": "key"}')
 
 if __name__ == '__main__':
     unittest.main()
