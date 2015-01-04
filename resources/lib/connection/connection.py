@@ -49,13 +49,13 @@ class Connection(object):
 
     def get_watched_movies(self):
         """ Get watched movies from episodehunter.tv """
-        responce = self.make_request('/v2/movie/getwatched')
-        return responce['value']
+        response = self.make_request('/v2/movie/getwatched')
+        return response['value']
 
     def get_watched_shows(self):
         """ Get watched TV shows from episodehunter.tv """
-        responce = self.make_request('/v2/tv/getwatched')
-        return responce['value']
+        response = self.make_request('/v2/tv/getwatched')
+        return response['value']
 
     def watching_movie(self, originaltitle, year, imdb_id, duration, percent):
         """ Set a movie as watching on episodehunter.tv """
