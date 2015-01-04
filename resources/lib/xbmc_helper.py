@@ -117,7 +117,7 @@ def get_movie_details_from_xbmc(library_id):
         method='VideoLibrary.GetMovieDetails',
         params={
             'movieid': library_id,
-            'properties': ['year', 'imdbnumber', 'originaltitle', 'movieid']
+            'properties': ['year', 'imdbnumber', 'originaltitle']
         }, id=1)
 
     try:
