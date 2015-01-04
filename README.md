@@ -1,7 +1,7 @@
 EpisodeHunter scrobbler
 =============
 
-[![Build Status](https://travis-ci.org/tjoskar/script.episodeHunter.svg)](https://travis-ci.org/tjoskar/script.episodeHunter)
+[![Build Status](https://travis-ci.org/tjoskar/script.episodeHunter.svg?branch=develop)](https://travis-ci.org/tjoskar/script.episodeHunter)
 
 This [XBMC](http://xbmc.org) addon automatically scrobble what you are watching to [episodehunter.tv](http://episodehunter.tv)
 
