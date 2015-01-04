@@ -227,8 +227,10 @@ class EHPlayer(xbmc.Player):
     def save_method_call_in_db(self, method, **kargs):
         methods_to_save = ['scrobble_movie', 'scrobble_episode']
         if method.__name__ in methods_to_save:
-            kargs['method'] = method.__name__
-            self.__db.write(kargs)
+            self.__db.write({
+                'method': method.__name__,
+                'parameter': kargs
+            })
 
     def sync_offline_data(self):
         """ Check the database for old offline data """
