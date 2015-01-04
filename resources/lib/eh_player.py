@@ -222,6 +222,7 @@ class EHPlayer(xbmc.Player):
         except ConnectionExceptions as error:
             self.__offline = True
             dialog.create_notification(error.value)
+            self.save_method_call_in_db(method, **kargs)
 
     def save_method_call_in_db(self, method, **kargs):
         methods_to_save = ['scrobble_movie', 'scrobble_episode']
