@@ -32,7 +32,27 @@ class GivenConnection(XbmcBaseTestCase, object):
 
         self.connection.set_movies_watched(movies)
 
-        self.http.make_request.assert_called_once_with('/v2/movie/watched', '{"username": "username", "movies": [{"plays": 3, "last_played": 1412964211, "title": "The Hunger Games", "xbmc_id": "1", "imdb_id": "tt1392170", "year": "2011"}], "apikey": "key"}')
+        args, kwargs = self.http.make_request.call_args
+        self.assertEqual(args[0], '/v2/movie/watched')
+        expecting = {
+            "username": "username",
+            "apikey": "key",
+            "movies": [
+                {
+                    "plays": 3,
+                    "last_played": 1412964211,
+                    "title": "The Hunger Games",
+                    "xbmc_id": "1",
+                    "imdb_id": "tt1392170",
+                    "year": "2011"
+                }]}
+        actually = json.loads(args[1])
+        self.assertEqual(len(set(actually.keys()).difference(set(expecting.keys()))), 0)
+        self.assertEqual(expecting['username'], actually['username'])
+        self.assertEqual(expecting['apikey'], actually['apikey'])
+        self.assertEqual(len(actually['movies']), len(expecting['movies']))
+        self.assertEqual(len(set(actually.keys()).difference(set(expecting.keys()))), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
