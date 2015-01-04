@@ -38,8 +38,14 @@ class Http(object):
         :raise error:urllib2.HTTPError 
         """
         if error.code == 403:
-            raise SettingsExceptions(json.load(error.read()))
+            try:
+                raise SettingsExceptions(json.load(error)['data'])
+            except KeyError:
+                raise SettingsExceptions()
         elif error.code == 400:
-            raise ConnectionExceptions(error.reason)
+            try:
+                raise ConnectionExceptions(json.load(error)['data'])
+            except KeyError:
+                raise ConnectionExceptions()
         else:
-            raise error
+            raise ConnectionExceptions(str(error))
