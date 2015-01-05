@@ -1,5 +1,5 @@
 """
-Sync watched Movies/TV shows to Episodehunter
+Sync watched TV episodes to Episodehunter
 """
 
 import copy
@@ -51,7 +51,7 @@ class Series(sync.Sync):
             self.connection.set_shows_watched(self.upstream_sync)
 
         if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32049)):  # 'episode will be marked as watched in xbmc':
-            self.progress_update(75, helper.language(32048))  # "Setting movies as seen in xbmc"
+            self.progress_update(75, helper.language(32052))  # "Setting episodes as seen in xbmc"
             xbmc_helper.set_series_as_watched(self.downstream_sync)
 
         if num_sync_upstream == 0 and num_sync_downstream == 0:
@@ -93,7 +93,7 @@ class Series(sync.Sync):
 
     def is_marked_as_watched_on_eh(self, series_id, season, episode):
         """
-        Check if a movie has been set as watched on EH
+        Check if an episode has been set as watched on EH
         :rtype : bool
         """
         series_id = str(series_id)

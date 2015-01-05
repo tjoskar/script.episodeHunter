@@ -230,3 +230,7 @@ msgstr ""
 msgctxt "#32051"
 msgid "Comparing XBMC database with episodehunter.tv"
 msgstr ""
+
+msgctxt "#32052"
+msgid "Setting episodes as seen in xbmc"
+msgstr ""
