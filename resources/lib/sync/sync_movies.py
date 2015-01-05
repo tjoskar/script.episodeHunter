@@ -21,7 +21,7 @@ class Movies(Sync):
         self.xbmc_movies = None
 
     def sync(self):
-        self.create_progress(helper.language(32021))  # "Checking XBMC Database for new watched movies"
+        self.create_progress(helper.language(32051))  # "Comparing XBMC database with episodehunter.tv"
         try:
             self.get_movies()
             self.get_movies_to_sync_upstream()

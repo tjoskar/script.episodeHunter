@@ -23,7 +23,7 @@ class Series(sync.Sync):
         self.xbmc_series = []
 
     def sync(self):
-        self.create_progress(helper.language(32021))  # "Checking XBMC Database for new watched movies"
+        self.create_progress(helper.language(32051))  # "Comparing XBMC database with episodehunter.tv"
         try:
             self.get_series()
             self.get_series_to_sync_upstream()
