@@ -1,3 +1,5 @@
+Version 1.1.1:
+      Language bugfix
 Version 1.1.0:
       Updated the addon for Helix
 Version 1.0.9:
