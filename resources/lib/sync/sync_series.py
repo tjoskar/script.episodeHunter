@@ -96,8 +96,8 @@ class Series(sync.Sync):
         Check if an episode has been set as watched on EH
         :rtype : bool
         """
-        series_id = str(series_id)
-        season = str(season)
+        series_id = int(series_id)
+        season = int(season)
         episode = int(episode)
         if series_id not in self.eh_watched_series:
             return False
@@ -116,9 +116,10 @@ class Series(sync.Sync):
         eh_watched_series = self.connection.get_watched_shows()
         self.eh_watched_series = {}
         for k, v in eh_watched_series.iteritems():
+            k = int(k)
             self.eh_watched_series[k] = {}
             for s in v['seasons']:
-                self.eh_watched_series[k][s['season']] = s['episodes']
+                self.eh_watched_series[k][int(s['season'])] = s['episodes']
 
     def get_series_from_xbmc(self):
         xbmc_series = xbmc_helper.get_tv_shows_from_xbmc()
