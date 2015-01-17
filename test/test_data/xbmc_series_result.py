@@ -41,11 +41,9 @@ def iterate_over_key(iterable, key):
 
 class TvShows():
 
-    _shows = []
-    _episodes = {}
-
     def __init__(self):
-        pass
+        self._shows = []
+        self._episodes = {}
 
     def add_show(self, tvshowid=None, title='', watchedepisodes=None, imdbnumber=None, year=1989, playcount=None):
         self._shows.append({
