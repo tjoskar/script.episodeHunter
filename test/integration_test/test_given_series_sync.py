@@ -7,9 +7,9 @@ from test.test_data import eh_series_result, xbmc_series_result
 from test.mocks import connection_mock
 
 
-class GivenMovieSync(XbmcBaseTestCase, object):
+class GivenSeriesSync(XbmcBaseTestCase, object):
     """
-    Test class for movie sync methods between EH and XBMC
+    Test class for tv shows sync methods between EH and XBMC
     """
 
     xbmc = None
@@ -20,7 +20,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
     set_series_as_watched = Mock()
 
     def setUp(self):
-        super(GivenMovieSync, self).setUp()
+        super(GivenSeriesSync, self).setUp()
         from resources.lib import xbmc_helper
 
         xbmc_helper.get_tv_shows_from_xbmc = self.get_tv_shows_from_xbmc
