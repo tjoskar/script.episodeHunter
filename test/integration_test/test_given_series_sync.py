@@ -202,6 +202,31 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         self.assertEqual(tvshow_to_download.episodes[0].season, 1)
         self.assertEqual(tvshow_to_download.episodes[0].episode, 6)
 
+    def test_should_not_sync_anything_if_xbmc_library_is_empty(self):
+        # Arrange
+        mock_eh_series = eh_series_result.EHSeries()\
+            .episode(1, 1, [1, 2, 3, 4, 5, 6])\
+            .episode(1, 2, [1, 2, 3, 4, 5, 6])\
+            .episode(2, 1, [1, 2, 3, 4, 5, 6])\
+            .get()
+
+        connection = connection_mock.ConnectionMock(
+            watched_shows=mock_eh_series,
+            return_status_code=200
+        )
+
+        self.get_tv_shows_from_xbmc.return_value = None
+
+        self.xbmc.abortRequested = False
+
+        # Act
+        sync = self.sync.Series(connection)
+        sync.sync()
+
+        # Assert
+        self.assertFalse(self.set_series_as_watched.called)
+        self.assertNotIn('set_series_as_watched', connection.called)
+
 
 if __name__ == '__main__':
     unittest.main()
