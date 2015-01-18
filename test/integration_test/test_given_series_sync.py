@@ -14,14 +14,19 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
 
     xbmc = None
     xbmcgui = None
-    get_tv_shows_from_xbmc = Mock()
-    get_seasons_from_xbmc = Mock()
-    get_episodes_from_xbmc = Mock()
-    set_series_as_watched = Mock()
+    get_tv_shows_from_xbmc = None
+    get_seasons_from_xbmc = None
+    get_episodes_from_xbmc = None
+    set_series_as_watched = None
 
     def setUp(self):
         super(GivenSeriesSync, self).setUp()
         from resources.lib import xbmc_helper
+
+        self.get_tv_shows_from_xbmc = Mock()
+        self.get_seasons_from_xbmc = Mock()
+        self.get_episodes_from_xbmc = Mock()
+        self.set_series_as_watched = Mock()
 
         xbmc_helper.get_tv_shows_from_xbmc = self.get_tv_shows_from_xbmc
         xbmc_helper.get_seasons_from_xbmc = self.get_seasons_from_xbmc
