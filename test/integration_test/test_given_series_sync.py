@@ -88,7 +88,48 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         self.assertEqual(tvshow_to_upload.episodes[0].season, 1)
         self.assertEqual(tvshow_to_upload.episodes[0].episode, 7)
 
-    def test_should_not_set_any_episode_as_watched(self):
+    def test_should_not_upload_unwatched_episodes(self):
+        # Arrange
+        mock_eh_series = eh_series_result.EHSeries()\
+            .episode(1, 1, [1, 2, 3, 4, 5, 6])\
+            .get()
+
+        connection = connection_mock.ConnectionMock(
+            watched_shows=mock_eh_series,
+            return_status_code=200
+        )
+
+        mock_xbmc_series = xbmc_series_result.TvShows()
+        mock_xbmc_series\
+            .add_show(imdbnumber=1, title='Lost')\
+            .add_watched_episodes(
+                tvshowid=1,
+                season=1,
+                episode_range=xrange(1, 7)
+            )\
+            .add_unwatched_episodes(
+                tvshowid=1,
+                season=1,
+                episode_range=[7]
+            )
+
+        self.get_tv_shows_from_xbmc.side_effect = mock_xbmc_series.get_tv_shows
+        self.get_seasons_from_xbmc.side_effect = mock_xbmc_series.get_seasons
+        self.get_episodes_from_xbmc.side_effect = mock_xbmc_series.get_episodes
+
+        self.xbmc.abortRequested = False
+
+        # Act
+        sync = self.sync.Series(connection)
+        sync.sync()
+
+        # Assert
+        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertFalse(self.set_series_as_watched.called)
+        self.assertEqual(len(sync.upstream_sync), 0)
+        self.assertEqual(len(sync.downstream_sync), 0)
+
+    def test_should_not_set_any_episode_as_watched_when_library_is_up_to_date(self):
         # Arrange
         mock_eh_series = eh_series_result.EHSeries()\
             .episode(1, 1, [1, 2, 3, 4, 5, 6])\
