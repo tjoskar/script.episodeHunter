@@ -122,6 +122,10 @@ class Series(sync.Sync):
     def get_series_from_xbmc(self):
         xbmc_series = xbmc_helper.get_tv_shows_from_xbmc()
 
+        if not isinstance(xbmc_series, list):
+            self.xbmc_series = []
+            return
+
         for tvshow in xbmc_series:
             seasons = xbmc_helper.get_seasons_from_xbmc(tvshow)
             episodes = [xbmc_helper.get_episodes_from_xbmc(tvshow, season['season']) for season in seasons]
