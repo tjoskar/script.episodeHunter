@@ -66,7 +66,7 @@ class Series(sync.Sync):
                 break
             show.episodes = [
                 e for e in show.episodes
-                if not self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays >= 0
+                if not self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays > 0
             ]
             if len(show.episodes) == 0:
                 continue
