@@ -19,7 +19,7 @@ class Series(sync.Sync):
         self.progress = None
         self.upstream_sync = []
         self.downstream_sync = []
-        self.eh_watched_series = None
+        self.eh_watched_series = []
         self.xbmc_series = []
 
     def sync(self):
