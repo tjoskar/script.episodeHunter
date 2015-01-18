@@ -61,7 +61,7 @@ class Movies(Sync):
             self.progress.update(50 / num_movies * i)
             if self.is_canceled():
                 break
-            if m.plays <= 0:
+            if m.plays == 0:
                 continue
             if self.movie_set_as_seen_on_eh(m.imdb_id):
                 continue
