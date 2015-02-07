@@ -13,7 +13,7 @@ def create_ok(*msg):
 
 
 def create_error_dialog(*msg):
-    helper.debug("Error: " + ", ".join([str(x) for x in msg]))
+    helper.xbmc_print("Error: " + ", ".join([str(x) for x in msg]))
     msg = (helper.language(32018), ) + msg  # "Error"
     create_ok(*msg)
 
