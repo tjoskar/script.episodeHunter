@@ -44,6 +44,12 @@ def debug(msg):
                 xbmc.log(__name__ + ": You are trying to print a bad string, I can not even print it")
 
 
+def print_exception_information():
+    import traceback
+    stack_trace = traceback.format_exc()
+    debug(stack_trace)
+
+
 def notification(header, message, level=0):
     """
     Create a notification and show it in 5 sec
