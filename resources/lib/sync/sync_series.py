@@ -148,6 +148,11 @@ def series_criteria(tvshow, episodes):
         return False
 
     try:
+        int(tvshow['imdbnumber'])
+    except (ValueError, TypeError):
+        return False
+
+    try:
         if 'year' not in tvshow or int(tvshow['year']) <= 0:
             return False
     except ValueError:

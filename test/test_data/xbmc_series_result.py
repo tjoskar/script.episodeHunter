@@ -52,7 +52,7 @@ class TvShows():
             'season': -1,
             'watchedepisodes': watchedepisodes,
             'label': title,
-            'imdbnumber': imdbnumber,
+            'imdbnumber': imdbnumber or tvshowid,
             'year': year,
             'playcount': playcount
         })
