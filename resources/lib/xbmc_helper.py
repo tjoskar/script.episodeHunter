@@ -85,8 +85,8 @@ def get_tv_shows_from_xbmc():
 
 
 def get_seasons_from_xbmc(tvshow):
-    if 'tvshowid' not in tvshow:
-        return None
+    if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
+        return []
     result = execute_rpc(method='VideoLibrary.GetSeasons', params={'tvshowid': tvshow['tvshowid'], 'properties': ['watchedepisodes', 'season']}, id=1)
 
     try:
@@ -98,8 +98,8 @@ def get_seasons_from_xbmc(tvshow):
 
 
 def get_episodes_from_xbmc(tvshow, season):
-    if 'tvshowid' not in tvshow:
-        return None
+    if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
+        return []
     result = execute_rpc(method='VideoLibrary.GetEpisodes', params={'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode', 'season']}, id=1)
 
     try:
