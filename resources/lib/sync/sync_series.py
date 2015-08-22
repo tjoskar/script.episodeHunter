@@ -131,7 +131,7 @@ class Series(sync.Sync):
         for tvshow in xbmc_series:
             seasons = xbmc_helper.get_seasons_from_xbmc(tvshow)
             episodes = [xbmc_helper.get_episodes_from_xbmc(tvshow, season['season']) for season in seasons]
-            if series_criteria(tvshow, episodes):
+            if not series_criteria(tvshow, episodes):
                 continue
             self.xbmc_series.append(series_model.create_from_xbmc(tvshow, episodes))
 
@@ -156,7 +156,9 @@ def series_criteria(tvshow, episodes):
     if 'playcount' not in tvshow:
         return False
 
-    if not all(['season' in e and 'episode' in e and 'playcount' in e for e in episodes]):
-        return False
+    for show in episodes:
+        for episode in show:
+            if not ('season' in episode and 'episode' in episode and 'playcount' in episode):
+                return False
 
     return True

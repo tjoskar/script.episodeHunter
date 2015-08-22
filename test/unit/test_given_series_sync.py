@@ -27,7 +27,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
 
         # Act
@@ -40,7 +40,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1)
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows.pop('title', None)
 
@@ -54,7 +54,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows.pop('imdbnumber', None)
 
@@ -68,7 +68,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows.pop('year', None)
 
@@ -82,7 +82,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows['year'] = 0
 
@@ -96,7 +96,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows.pop('playcount', None)
 
@@ -110,7 +110,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         # Arrange
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
-        series_mock.add_episodes(1, 1, xbmc_series_result.EPISODE)
+        series_mock.add_episodes(1, 1, [xbmc_series_result.EPISODE])
         tv_shows = series_mock.get_tv_shows()[0]
         tv_shows['playcount'] = 0
 
