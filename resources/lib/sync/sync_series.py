@@ -162,6 +162,8 @@ def series_criteria(tvshow, episodes):
         return False
 
     for show in episodes:
+        if not isinstance(show, list):
+            continue
         for episode in show:
             if not ('season' in episode and 'episode' in episode and 'playcount' in episode):
                 return False

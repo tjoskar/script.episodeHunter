@@ -125,10 +125,10 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
         tv_shows = series_mock.get_tv_shows()[0]
-        episodes = [{
+        episodes = [[{
             'season': 1,
             'playcount': 1
-        }]
+        }]]
 
         # Act
         result = self.sync.series_criteria(tv_shows, episodes)
@@ -141,10 +141,10 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
         tv_shows = series_mock.get_tv_shows()[0]
-        episodes = [{
+        episodes = [[{
             'episode': 1,
             'playcount': 1
-        }]
+        }]]
 
         # Act
         result = self.sync.series_criteria(tv_shows, episodes)
@@ -157,10 +157,10 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         series_mock = xbmc_series_result.TvShows()
         series_mock.add_show(tvshowid=1, title='Dexter')
         tv_shows = series_mock.get_tv_shows()[0]
-        episodes = [{
+        episodes = [[{
             'episode': 1,
             'season': 1
-        }]
+        }]]
 
         # Act
         result = self.sync.series_criteria(tv_shows, episodes)
