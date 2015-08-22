@@ -22,7 +22,7 @@ class ConnectionMock(MockBaseClass, object):
 
     def set_shows_watched(self, series_seen=None):
         series_seen = series_seen or []
-        self._increase_called('set_series_as_watched', series_seen)
+        self._increase_called('set_shows_watched', series_seen)
         return self._return()
 
     def _return(self):

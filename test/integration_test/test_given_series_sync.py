@@ -79,8 +79,8 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertIn('set_series_as_watched', connection.called)
-        tvshows_to_upload = connection.called['set_series_as_watched'][0]
+        self.assertIn('set_shows_watched', connection.called)
+        tvshows_to_upload = connection.called['set_shows_watched'][0]
         tvshow_to_upload = tvshows_to_upload[0]
         self.assertEqual(len(tvshows_to_upload), 1)
         self.assertEqual(tvshow_to_upload.title, 'Lost')
@@ -124,7 +124,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
         self.assertFalse(self.set_series_as_watched.called)
         self.assertEqual(len(sync.upstream_sync), 0)
         self.assertEqual(len(sync.downstream_sync), 0)
@@ -173,7 +173,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
         self.assertFalse(self.set_series_as_watched.called)
         self.assertEqual(len(sync.upstream_sync), 0)
         self.assertEqual(len(sync.downstream_sync), 0)
@@ -227,8 +227,8 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertIn('set_series_as_watched', connection.called)
-        tvshows_to_upload = connection.called['set_series_as_watched'][0]
+        self.assertIn('set_shows_watched', connection.called)
+        tvshows_to_upload = connection.called['set_shows_watched'][0]
         tvshow_to_upload = tvshows_to_upload[0]
         self.assertEqual(len(tvshows_to_upload), 1)
         self.assertEqual(tvshow_to_upload.title, 'Lost')
@@ -266,7 +266,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
 
         # Assert
         self.assertFalse(self.set_series_as_watched.called)
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
 
 
 if __name__ == '__main__':
