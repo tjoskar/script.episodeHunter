@@ -178,6 +178,12 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         result = self.sync.movie_criteria(movie)
         self.assertFalse(result)
 
+    def test_should_return_fasle_if_movie_has_empty_imdb_id(self):
+        movie = xbmc_movie_result.get('The Hunger Games')[0]
+        movie['imdbnumber'] = ''
+        result = self.sync.movie_criteria(movie)
+        self.assertFalse(result)
+
     def test_should_return_fasle_if_movie_has_no_title_nor_orginaltitle(self):
         movie = xbmc_movie_result.get('The Hunger Games', remove_attr=['title', 'originaltitle'])[0]
         result = self.sync.movie_criteria(movie)
