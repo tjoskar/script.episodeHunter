@@ -1,6 +1,5 @@
-from mock import patch, Mock
+from mock import Mock
 import unittest
-import json
 
 from test.xbmc_base_test_case import XbmcBaseTestCase
 from test.test_data import eh_movie_result, xbmc_movie_result
@@ -175,6 +174,12 @@ class GivenMovieSync(XbmcBaseTestCase, object):
 
     def test_should_return_fasle_if_movie_has_no_imdb_id(self):
         movie = xbmc_movie_result.get('The Hunger Games', remove_attr=['imdbnumber'])[0]
+        result = self.sync.movie_criteria(movie)
+        self.assertFalse(result)
+
+    def test_should_return_fasle_if_movie_has_empty_imdb_id(self):
+        movie = xbmc_movie_result.get('The Hunger Games')[0]
+        movie['imdbnumber'] = ''
         result = self.sync.movie_criteria(movie)
         self.assertFalse(result)
 

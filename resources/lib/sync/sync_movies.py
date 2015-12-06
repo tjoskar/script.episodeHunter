@@ -102,7 +102,7 @@ def movie_criteria(movie):
     Determine if a movie meets the criteria
     :rtype : bool
     """
-    if 'imdbnumber' not in movie:
+    if 'imdbnumber' not in movie or movie['imdbnumber'] == '':
         helper.debug("Skipping a movie - no IMDb ID was found")
         return False
 

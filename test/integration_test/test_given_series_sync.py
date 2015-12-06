@@ -79,14 +79,60 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertIn('set_series_as_watched', connection.called)
-        tvshows_to_upload = connection.called['set_series_as_watched'][0]
+        self.assertIn('set_shows_watched', connection.called)
+        tvshows_to_upload = connection.called['set_shows_watched'][0]
         tvshow_to_upload = tvshows_to_upload[0]
         self.assertEqual(len(tvshows_to_upload), 1)
         self.assertEqual(tvshow_to_upload.title, 'Lost')
         self.assertEqual(len(tvshow_to_upload.episodes), 1)
         self.assertEqual(tvshow_to_upload.episodes[0].season, 1)
         self.assertEqual(tvshow_to_upload.episodes[0].episode, 7)
+
+    def test_should_not_upload_episodes_that_missing_imdbnumber(self):
+        # Arrange
+        mock_eh_series = eh_series_result.EHSeries()\
+            .episode(2, 1, [1])\
+            .get()
+
+        connection = connection_mock.ConnectionMock(
+            watched_shows=mock_eh_series,
+            return_status_code=200
+        )
+
+        mock_xbmc_series = xbmc_series_result.TvShows()
+        mock_xbmc_series\
+            .add_show(imdbnumber='', title='Lost')\
+            .add_show(imdbnumber=2, title='Dexter')\
+            .add_watched_episodes(
+                tvshowid='',
+                season=1,
+                episode_range=[1, 2]
+            )\
+            .add_watched_episodes(
+                tvshowid=2,
+                season=1,
+                episode_range=[1, 2]
+            )
+
+        self.get_tv_shows_from_xbmc.side_effect = mock_xbmc_series.get_tv_shows
+        self.get_seasons_from_xbmc.side_effect = mock_xbmc_series.get_seasons
+        self.get_episodes_from_xbmc.side_effect = mock_xbmc_series.get_episodes
+
+        self.xbmc.abortRequested = False
+
+        # Act
+        sync = self.sync.Series(connection)
+        sync.sync()
+
+        # Assert
+        self.assertIn('set_shows_watched', connection.called)
+        tvshows_to_upload = connection.called['set_shows_watched'][0]
+        tvshow_to_upload = tvshows_to_upload[0]
+        self.assertEqual(len(tvshows_to_upload), 1)
+        self.assertEqual(tvshow_to_upload.title, 'Dexter')
+        self.assertEqual(len(tvshow_to_upload.episodes), 1)
+        self.assertEqual(tvshow_to_upload.episodes[0].season, 1)
+        self.assertEqual(tvshow_to_upload.episodes[0].episode, 2)
 
     def test_should_not_upload_unwatched_episodes(self):
         # Arrange
@@ -124,7 +170,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
         self.assertFalse(self.set_series_as_watched.called)
         self.assertEqual(len(sync.upstream_sync), 0)
         self.assertEqual(len(sync.downstream_sync), 0)
@@ -173,7 +219,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
         self.assertFalse(self.set_series_as_watched.called)
         self.assertEqual(len(sync.upstream_sync), 0)
         self.assertEqual(len(sync.downstream_sync), 0)
@@ -227,8 +273,8 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertIn('set_series_as_watched', connection.called)
-        tvshows_to_upload = connection.called['set_series_as_watched'][0]
+        self.assertIn('set_shows_watched', connection.called)
+        tvshows_to_upload = connection.called['set_shows_watched'][0]
         tvshow_to_upload = tvshows_to_upload[0]
         self.assertEqual(len(tvshows_to_upload), 1)
         self.assertEqual(tvshow_to_upload.title, 'Lost')
@@ -266,7 +312,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
 
         # Assert
         self.assertFalse(self.set_series_as_watched.called)
-        self.assertNotIn('set_series_as_watched', connection.called)
+        self.assertNotIn('set_shows_watched', connection.called)
 
 
 if __name__ == '__main__':
