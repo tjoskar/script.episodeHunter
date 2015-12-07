@@ -36,11 +36,15 @@ class Sync(object):
         else:
             self.progress.update(percent, line)
 
-    def is_canceled(self):
+    def check_if_canceled(self):
         if xbmc.abortRequested:
             raise SystemExit()
         if self.progress.iscanceled():
             raise UserAbortExceptions()
+
+    def is_canceled(self):
+        print 'obsolete'
+        self.check_if_canceled()
 
     def quit(self):
         self.progress.close()
