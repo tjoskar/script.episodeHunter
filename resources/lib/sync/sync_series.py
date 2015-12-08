@@ -64,8 +64,7 @@ class Series(sync.Sync):
         for i, show in enumerate(xbmc_series):
             assert isinstance(show, series_model.Series)
             self.progress.update(50 / num_series * i)
-            if self.is_canceled():
-                break
+            self.is_canceled()
             show.episodes = [
                 e for e in show.episodes
                 if not self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays > 0
