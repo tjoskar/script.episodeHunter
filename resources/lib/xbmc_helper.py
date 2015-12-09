@@ -67,47 +67,106 @@ def get_movies_from_xbmc():
         return []
 
 
-def get_tv_shows_from_xbmc():
+def watched_shows():
+    jumps = 5
+    start = 0
+    end = jumps
+    while True:
+        filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+        shows = get_shows(start, end, filter_by_playcount)
+        start = end
+        end = start + jumps
+        if not shows:
+            return
+        for show in shows:
+            if meet_show_criteria(show):
+                yield show
+
+
+def get_shows(start=0, end=0, filt=None):
+    params = {
+        'properties': ['title', 'year', 'imdbnumber', 'playcount', 'season', 'watchedepisodes']
+    }
+    if end != 0:
+        params['limits'] = {'start': start, 'end': end}
+    if filt:
+        params['filter'] = filt
+
     result = execute_rpc(
         method='VideoLibrary.GetTVShows',
-        params={
-            'properties': ['title', 'year', 'imdbnumber', 'playcount', 'season', 'watchedepisodes']
-        },
+        params=params,
         id=1
     )
 
     try:
-        return result['tvshows']
+        return result['tvshows'] if isinstance(result['tvshows'], list) else []
     except KeyError:
         helper.debug("Failing to fetch tv shows from xbmc library")
         helper.debug(result)
         return []
 
 
-def get_seasons_from_xbmc(tvshow):
+def get_seasons_from_xbmc(tvshow, filt=None):
     if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
-        return []
-    result = execute_rpc(method='VideoLibrary.GetSeasons', params={'tvshowid': tvshow['tvshowid'], 'properties': ['watchedepisodes', 'season']}, id=1)
+        return
+
+    params = {
+        'tvshowid': tvshow['tvshowid'],
+        'properties': ['watchedepisodes', 'season']
+    }
+
+    if filt:
+        params['filter'] = filt
+
+    result = execute_rpc(
+        method='VideoLibrary.GetSeasons',
+        params=params,
+        id=1
+    )
 
     try:
-        return result['seasons']
+        seasons = result['seasons'] if isinstance(result['seasons'], list) else []
     except KeyError:
         helper.debug("Failing to fetch seasons for TV show with id: " + str(tvshow))
-        helper.debug(result)
-        return []
+        seasons = []
+
+    for season in seasons:
+        try:
+            yield season['season']
+        except KeyError:
+            pass
 
 
-def get_episodes_from_xbmc(tvshow, season):
+def get_watched_seasons(show):
+    filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+    return get_seasons_from_xbmc(show, filter_by_playcount)
+
+
+def get_episodes(tvshow, season, filt=None):
     if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
         return []
-    result = execute_rpc(method='VideoLibrary.GetEpisodes', params={'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode', 'season']}, id=1)
+
+    params = {'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode', 'season']}
+    if filt:
+        params['filter'] = filt
+
+    result = execute_rpc(
+        method='VideoLibrary.GetEpisodes',
+        params=params,
+        id=1
+    )
 
     try:
-        return result['episodes']
+        return result['episodes'] if isinstance(result['episodes'], list) else []
     except KeyError:
         helper.debug("Failing to fetch episodes in season " + str(season) + ", tvshow id: " + str(tvshow))
         helper.debug(result)
         return []
+
+
+def get_watched_episodes(show, season):
+    filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+    return get_episodes(show, season, filter_by_playcount)
 
 
 def get_movie_details_from_xbmc_by_title(title, year, fields):
@@ -210,3 +269,24 @@ def set_series_as_watched(series):
             } for i, e in enumerate(s.episodes)]
 
     map(xbmc_rpc, helper.chunks(episodes, 50))
+
+
+def meet_show_criteria(tvshow):
+    if 'title' not in tvshow or not tvshow['title']:
+        return False
+
+    if 'imdbnumber' not in tvshow:
+        return False
+
+    try:
+        int(tvshow['imdbnumber'])
+    except (ValueError, TypeError):
+        return False
+
+    try:
+        if 'year' not in tvshow or int(tvshow['year']) <= 0:
+            return False
+    except ValueError:
+        return False
+
+    return True
