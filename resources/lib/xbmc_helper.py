@@ -248,11 +248,11 @@ def set_movies_as_watched(movies):
     :param movies: list of Movies
     """
     movies_rpc = [{
-                      'jsonrpc': '2.0',
-                      'method': 'VideoLibrary.SetMovieDetails',
-                      'params': {'movieid': m.xbmc_id, 'playcount': 1},
-                      'id': i
-                  } for i, m in enumerate(movies)]
+        'jsonrpc': '2.0',
+        'method': 'VideoLibrary.SetMovieDetails',
+        'params': {'movieid': m.xbmc_id, 'playcount': 1},
+        'id': i
+    } for i, m in enumerate(movies)]
 
     map(xbmc_rpc, helper.chunks(movies_rpc, 50))
 
@@ -262,11 +262,11 @@ def set_series_as_watched(series):
     for s in series:
         assert isinstance(s, Series)
         episodes = episodes + [{
-                'jsonrpc': '2.0',
-                'method': 'VideoLibrary.SetEpisodeDetails',
-                'params': {'episodeid': e.xbmc_id, 'playcount': 1},
-                'id': i
-            } for i, e in enumerate(s.episodes)]
+            'jsonrpc': '2.0',
+            'method': 'VideoLibrary.SetEpisodeDetails',
+            'params': {'episodeid': e.xbmc_id, 'playcount': 1},
+            'id': i
+        } for i, e in enumerate(s.episodes)]
 
     map(xbmc_rpc, helper.chunks(episodes, 50))
 
