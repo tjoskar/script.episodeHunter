@@ -35,17 +35,20 @@ class Connection(object):
     def set_shows_watched(self, shows):
         """ Set a several episodes for a TV show as watched """
         # TO DO: Fix this shit
-        for s in shows:
-            assert isinstance(s, Series)
-            self.make_request(
-                '/v2/tv/watched',
-                {
-                    'tvdb_id': s.tvdb_id,
-                    'title': s.title,
-                    'year': s.year,
-                    'episodes': s.episodes
-                }
-            )
+        for show in shows:
+            self.set_show_watched(show)
+
+    def set_show_watched(self, show):
+        """ Set a show as watched on episodehunter.tv """
+        self.make_request(
+            '/v2/tv/watched',
+            {
+                'tvdb_id': show.tvdb_id,
+                'title': show.title,
+                'year': show.year,
+                'episodes': show.episodes
+            }
+        )
 
     def get_watched_movies(self):
         """ Get watched movies from episodehunter.tv """
