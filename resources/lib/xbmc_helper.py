@@ -59,12 +59,7 @@ def get_movies_from_xbmc():
         id=1
     )
 
-    try:
-        return result['movies']
-    except KeyError:
-        helper.debug("Failing to fetch movies from xbmc library")
-        helper.debug(result)
-        return []
+    return result['movies'] if 'movies' in result and isinstance(result['movies'], list) else []
 
 
 def watched_shows():
@@ -98,12 +93,7 @@ def get_shows(start=0, end=0, filt=None):
         id=1
     )
 
-    try:
-        return result['tvshows'] if isinstance(result['tvshows'], list) else []
-    except KeyError:
-        helper.debug("Failing to fetch tv shows from xbmc library")
-        helper.debug(result)
-        return []
+    return result['tvshows'] if 'tvshows' in result and isinstance(result['tvshows'], list) else []
 
 
 def get_seasons_from_xbmc(tvshow, filt=None):
@@ -124,11 +114,7 @@ def get_seasons_from_xbmc(tvshow, filt=None):
         id=1
     )
 
-    try:
-        seasons = result['seasons'] if isinstance(result['seasons'], list) else []
-    except KeyError:
-        helper.debug("Failing to fetch seasons for TV show with id: " + str(tvshow))
-        seasons = []
+    seasons = result['seasons'] if 'seasons' in result and isinstance(result['seasons'], list) else []
 
     for season in seasons:
         try:
@@ -156,12 +142,7 @@ def get_episodes(tvshow, season, filt=None):
         id=1
     )
 
-    try:
-        return result['episodes'] if isinstance(result['episodes'], list) else []
-    except KeyError:
-        helper.debug("Failing to fetch episodes in season " + str(season) + ", tvshow id: " + str(tvshow))
-        helper.debug(result)
-        return []
+    return result['episodes'] if 'episodes' in result and isinstance(result['episodes'], list) else []
 
 
 def get_watched_episodes(show, season):
@@ -171,13 +152,7 @@ def get_watched_episodes(show, season):
 
 def get_movie_details_from_xbmc_by_title(title, year, fields):
     result = execute_rpc(method='VideoLibrary.GetMovieDetails', params={'title': title, 'year': year, 'properties': fields}, id=1)
-
-    try:
-        return result['moviedetails']
-    except KeyError:
-        helper.debug("Failing to fetch movie from xbmc library by title")
-        helper.debug(result)
-        return None
+    return result['moviedetails'] if 'moviedetails' in result else None
 
 
 def get_movie_details_from_xbmc(library_id):
@@ -193,12 +168,7 @@ def get_movie_details_from_xbmc(library_id):
             'properties': ['year', 'imdbnumber', 'originaltitle']
         }, id=1)
 
-    try:
-        return result['moviedetails']
-    except KeyError:
-        helper.debug("Failing to fetch movie details from xbmc library")
-        helper.debug(result)
-        return None
+    return result['moviedetails'] if 'moviedetails' in result else None
 
 
 def get_episode_details_from_xbmc(library_id):
@@ -214,12 +184,7 @@ def get_episode_details_from_xbmc(library_id):
             'properties': ['tvshowid', 'showtitle', 'season', 'episode']
         }, id=1)
 
-    try:
-        return result['episodedetails']
-    except KeyError:
-        helper.debug("Failing to fetch episode details from xbmc library")
-        helper.debug(result)
-        return None
+    return result['episodedetails'] if 'episodedetails' in result else None
 
 
 def get_show_details_from_xbmc(library_id):
@@ -230,12 +195,7 @@ def get_show_details_from_xbmc(library_id):
             'properties': ['imdbnumber', 'year']
         }, id=1)
 
-    try:
-        return result['tvshowdetails']
-    except KeyError:
-        helper.debug("Failing to fetch tv show details from xbmc library")
-        helper.debug(result)
-        return None
+    return result['tvshowdetails'] if 'tvshowdetails' in result else None
 
 
 def set_movie_as_watched(movie_id):
