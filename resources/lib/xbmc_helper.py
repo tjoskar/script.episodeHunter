@@ -72,7 +72,7 @@ def watched_shows():
     start = 0
     end = jumps
     while True:
-        filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+        filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
         shows = get_shows(start, end, filter_by_playcount)
         start = end
         end = start + jumps
@@ -165,7 +165,7 @@ def get_episodes(tvshow, season, filt=None):
 
 
 def get_watched_episodes(show, season):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
     return get_episodes(show, season, filter_by_playcount)
 
 
