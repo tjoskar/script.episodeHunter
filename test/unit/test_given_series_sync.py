@@ -4,6 +4,7 @@ import unittest
 from test.xbmc_base_test_case import XbmcBaseTestCase
 from test.test_data import xbmc_series_result
 
+
 class GivenSeriesSync(XbmcBaseTestCase, object):
     """
     Test class for series sync methods between EH and XBMC
