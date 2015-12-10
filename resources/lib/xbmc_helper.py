@@ -122,13 +122,19 @@ def get_watched_seasons(show):
     return get_seasons_from_xbmc(show, filter_by_playcount)
 
 
-def get_episodes(tvshow, season, filt=None):
+def get_episodes(tvshow, season=None, filt=None):
     if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
         return []
 
-    params = {'tvshowid': tvshow['tvshowid'], 'season': season, 'properties': ['playcount', 'episode', 'season']}
+    params = {
+        'tvshowid': tvshow['tvshowid'],
+        'properties': ['playcount', 'episode', 'season']
+    }
+
     if filt:
         params['filter'] = filt
+    if season:
+        params['season'] = season
 
     result = execute_rpc(
         method='VideoLibrary.GetEpisodes',
