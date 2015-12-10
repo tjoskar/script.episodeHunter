@@ -118,7 +118,7 @@ def get_seasons_from_xbmc(tvshow, filt=None):
 
 
 def get_watched_seasons(show):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'gt', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
     return get_seasons_from_xbmc(show, filter_by_playcount)
 
 
