@@ -1,8 +1,6 @@
 import json
-
 import xbmc
 import helper
-from resources.model.series_model import Series
 
 
 def xbmc_rpc(arg):
@@ -12,7 +10,7 @@ def xbmc_rpc(arg):
 
     if 'error' in result:
         helper.debug('execute_rpc: ' + str(result['error']))
-        return None
+        return {'result': {}}
 
     return result
 
@@ -48,16 +46,12 @@ def get_currently_playing_from_xbmc(playerid):
 
 
 def get_movies_from_xbmc():
-    """
-    :rtype : dict
-    """
     result = execute_rpc(
         method='VideoLibrary.GetMovies',
         params={
             'properties': ['title', 'year', 'originaltitle', 'imdbnumber', 'playcount', 'lastplayed']
         },
-        id=1
-    )
+        id=1)
 
     return result['movies'] if 'movies' in result and isinstance(result['movies'], list) else []
 
@@ -156,33 +150,25 @@ def get_movie_details_from_xbmc_by_title(title, year, fields):
 
 
 def get_movie_details_from_xbmc(library_id):
-    """
-    Get a single movie from xbmc given id
-    :param library_id:int
-    :rtype : dict
-    """
     result = execute_rpc(
         method='VideoLibrary.GetMovieDetails',
         params={
             'movieid': library_id,
             'properties': ['year', 'imdbnumber', 'originaltitle']
-        }, id=1)
+        },
+        id=1)
 
     return result['moviedetails'] if 'moviedetails' in result else None
 
 
 def get_episode_details_from_xbmc(library_id):
-    """
-    Get a single movie from xbmc given id
-    :param library_id:int
-    :rtype : dict
-    """
     result = execute_rpc(
         method='VideoLibrary.GetEpisodeDetails',
         params={
             'episodeid': library_id,
             'properties': ['tvshowid', 'showtitle', 'season', 'episode']
-        }, id=1)
+        },
+        id=1)
 
     return result['episodedetails'] if 'episodedetails' in result else None
 
@@ -193,7 +179,8 @@ def get_show_details_from_xbmc(library_id):
         params={
             'tvshowid': library_id,
             'properties': ['imdbnumber', 'year']
-        }, id=1)
+        },
+        id=1)
 
     return result['tvshowdetails'] if 'tvshowdetails' in result else None
 
@@ -203,10 +190,6 @@ def set_movie_as_watched(movie_id):
 
 
 def set_movies_as_watched(movies):
-    """
-    Set movies as watched
-    :param movies: list of Movies
-    """
     movies_rpc = [{
         'jsonrpc': '2.0',
         'method': 'VideoLibrary.SetMovieDetails',
@@ -220,7 +203,6 @@ def set_movies_as_watched(movies):
 def set_series_as_watched(series):
     episodes = []
     for s in series:
-        assert isinstance(s, Series)
         episodes = episodes + [{
             'jsonrpc': '2.0',
             'method': 'VideoLibrary.SetEpisodeDetails',
@@ -233,9 +215,6 @@ def set_series_as_watched(series):
 
 def meet_show_criteria(tvshow):
     if 'title' not in tvshow or not tvshow['title']:
-        return False
-
-    if 'imdbnumber' not in tvshow:
         return False
 
     try:
