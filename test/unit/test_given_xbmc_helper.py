@@ -53,9 +53,9 @@ class GivenXbmcHelper(XbmcBaseTestCase, object):
         args_list = self.json_rcp_mock.call_args_list
         self.assertEqual(num_show, 2)
         self.assertEqual(self.json_rcp_mock.call_count, 3)
-        self.assertEqual(args_list[0], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "gt", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 0, "end": 5}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
-        self.assertEqual(args_list[1], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "gt", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 5, "end": 10}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
-        self.assertEqual(args_list[2], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "gt", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 10, "end": 15}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
+        self.assertEqual(args_list[0], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "greaterthan", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 0, "end": 5}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
+        self.assertEqual(args_list[1], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "greaterthan", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 5, "end": 10}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
+        self.assertEqual(args_list[2], call('{"jsonrpc": "2.0", "params": {"filter": {"operator": "greaterthan", "field": "playcount", "value": "0"}, "properties": ["title", "year", "imdbnumber", "playcount", "season", "watchedepisodes"], "limits": {"start": 10, "end": 15}}, "method": "VideoLibrary.GetTVShows", "id": 1}'))
 
 if __name__ == '__main__':
     unittest.main()
