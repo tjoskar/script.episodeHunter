@@ -5,7 +5,6 @@ Makes all HTTP request to episodehunter.tv
 
 import json
 from resources.lib import helper
-from resources.model.series_model import Series
 
 
 class Connection(object):

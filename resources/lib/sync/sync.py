@@ -1,8 +1,6 @@
 import xbmc
-
 import resources.lib.gui.dialog as dialog
 import resources.lib.gui.progress as progress
-import resources.lib.helper as helper
 from resources.exceptions import UserAbortExceptions
 
 
