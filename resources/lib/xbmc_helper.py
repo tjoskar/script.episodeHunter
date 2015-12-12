@@ -278,7 +278,7 @@ def meet_show_criteria(tvshow):
 
     try:
         int(tvshow['imdbnumber'])
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, KeyError):
         return False
 
     try:
