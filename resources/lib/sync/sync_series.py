@@ -57,21 +57,29 @@ class Series(sync.Sync):
         if num_sync_upstream == 0 and num_sync_downstream == 0:
             dialog.create_ok(helper.language(32050))
 
-    def get_series_to_sync_upstream(self):
-        xbmc_series = copy.deepcopy(self.xbmc_series)
-        num_series = len(xbmc_series)
-        self.upstream_sync = []
-        for i, show in enumerate(xbmc_series):
-            assert isinstance(show, series_model.Series)
-            self.progress.update(50 / num_series * i)
-            self.is_canceled()
-            show.episodes = [
-                e for e in show.episodes
-                if not self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays > 0
+
+    def sync_upstream(self):
+        for show in self.shows_to_sync_upstream():
+            # Incleace progress, like a ln-function. self.progress.update(50 / num_series * i)
+            self.check_if_canceled()
+            self.connection.set_show_as_watched(show)
+
+
+    def shows_to_sync_upstream(self):
+        for xbmc_show in xbmc_helper.watched_shows():
+            episodes = [
+                e for e in xbmc_helper.get_watched_episodes(xbmc_show) or []
+                if not self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
             ]
-            if len(show.episodes) == 0:
+            if not episodes:
                 continue
-            self.upstream_sync.append(show)
+            yield {
+                'tvdb_id': xbmc_show['imdbnumber'],
+                'title': xbmc_show['title'],
+                'year': xbmc_show['year'],
+                'episodes': episodes
+            }
+
 
     def get_series_to_sync_downstream(self):
         xbmc_series = copy.deepcopy(self.xbmc_series)
@@ -107,10 +115,6 @@ class Series(sync.Sync):
 
         return True
 
-    def get_series(self):
-        self.get_series_from_eh()
-        self.get_series_from_xbmc()
-
     def get_series_from_eh(self):
         eh_watched_series = self.connection.get_watched_shows()
         self.eh_watched_series = {}
@@ -120,51 +124,9 @@ class Series(sync.Sync):
             for s in v['seasons']:
                 self.eh_watched_series[k][int(s['season'])] = s['episodes']
 
-    def get_series_from_xbmc(self):
-        xbmc_series = xbmc_helper.get_tv_shows_from_xbmc()
 
-        if not isinstance(xbmc_series, list):
-            self.xbmc_series = []
-            return
-
-        for tvshow in xbmc_series:
-            seasons = xbmc_helper.get_seasons_from_xbmc(tvshow)
-            episodes = [xbmc_helper.get_episodes_from_xbmc(tvshow, season['season']) for season in seasons]
-            if not series_criteria(tvshow, episodes):
-                continue
-            self.xbmc_series.append(series_model.create_from_xbmc(tvshow, episodes))
-
-
-def series_criteria(tvshow, episodes):
-    """
-    Determine if a shows meets the criteria
-    :rtype : bool
-    """
-    if 'title' not in tvshow:
-        return False
-
-    if 'imdbnumber' not in tvshow:
-        return False
-
-    try:
-        int(tvshow['imdbnumber'])
-    except (ValueError, TypeError):
-        return False
-
-    try:
-        if 'year' not in tvshow or int(tvshow['year']) <= 0:
-            return False
-    except ValueError:
-        return False
-
-    if 'playcount' not in tvshow:
-        return False
-
-    for show in episodes:
-        if not isinstance(show, list):
-            continue
-        for episode in show:
-            if not ('season' in episode and 'episode' in episode and 'playcount' in episode):
-                return False
-
-    return True
+    def watched_shows_in_xbmc(self):
+        watched_shows = xbmc_helper.watched_shows()
+        for show in watched_shows:
+            episodes = [xbmc_helper.get_watched_episodes(show, season) for season in xbmc_helper.get_watched_seasons(show)]
+            yield series_model.create_from_xbmc(show, episodes)

@@ -36,9 +36,9 @@ class Connection(object):
         """ Set a several episodes for a TV show as watched """
         # TO DO: Fix this shit
         for show in shows:
-            self.set_show_watched(show)
+            self.set_show_as_watched(show)
 
-    def set_show_watched(self, show):
+    def set_show_as_watched(self, show):
         """ Set a show as watched on episodehunter.tv """
         self.make_request(
             '/v2/tv/watched',

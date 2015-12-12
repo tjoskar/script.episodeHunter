@@ -145,7 +145,7 @@ def get_episodes(tvshow, season=None, filt=None):
     return result['episodes'] if 'episodes' in result and isinstance(result['episodes'], list) else []
 
 
-def get_watched_episodes(show, season):
+def get_watched_episodes(show, season=None):
     filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
     return get_episodes(show, season, filter_by_playcount)
 
