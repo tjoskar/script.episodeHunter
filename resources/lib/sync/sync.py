@@ -39,9 +39,5 @@ class Sync(object):
         if self.progress.iscanceled():
             raise UserAbortExceptions()
 
-    def is_canceled(self):
-        print 'obsolete'
-        self.check_if_canceled()
-
     def quit(self):
         self.progress.close()

@@ -59,8 +59,7 @@ class Movies(Sync):
         for i, m in enumerate(self.xbmc_movies):
             assert isinstance(m, movie_model.Movie)
             self.progress.update(50 / num_movies * i)
-            if self.is_canceled():
-                break
+            self.check_if_canceled()
             if m.plays == 0:
                 continue
             if self.movie_set_as_seen_on_eh(m.imdb_id):
@@ -73,8 +72,7 @@ class Movies(Sync):
         for i, m in enumerate(self.xbmc_movies):
             assert isinstance(m, movie_model.Movie)
             self.progress.update(50 / num_movies * i + 50)
-            if self.is_canceled():
-                break
+            self.check_if_canceled()
             if m.plays > 0:
                 continue
             if not self.movie_set_as_seen_on_eh(m.imdb_id):
