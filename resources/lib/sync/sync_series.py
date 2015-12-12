@@ -14,19 +14,13 @@ class Series(sync.Sync):
 
     def __init__(self, connection):
         super(Series, self).__init__(connection)
-        self.progress = None
-        self.upstream_sync = []
-        self.downstream_sync = []
         self.eh_watched_series = []
-        self.xbmc_series = []
+        self.total_sync_episodes = 0
 
     def sync(self):
         helper.debug("Start syncing tv shows")
         self.create_progress(helper.language(32051))  # "Comparing XBMC database with episodehunter.tv"
         try:
-            self.get_series()
-            self.get_series_to_sync_upstream()
-            self.get_series_to_sync_downstream()
             self._sync()
         except UserAbortExceptions:
             dialog.create_ok(helper.language(32022))  # "Progress Aborted"
@@ -41,33 +35,38 @@ class Series(sync.Sync):
         self.quit()
 
     def _sync(self):
-        num_sync_upstream = sum(len(e.episodes) for e in self.upstream_sync)
-        num_sync_downstream = sum(len(e.episodes) for e in self.downstream_sync)
+        self.get_series_from_eh()
+        self.sync_upstream()
+        self.sync_downstream()
 
-        if num_sync_upstream > 0 and self.ask_user_yes_or_no(str(num_sync_upstream) + " " + helper.language(32031)):  # 'episodes will be marked as watched on episodehunter.tv'
-            self.progress_update(50, helper.language(32043))  # "Uploading shows to episodehunter.tv"
-            self.connection.set_shows_watched(self.upstream_sync)
-
-        if num_sync_downstream > 0 and self.ask_user_yes_or_no(str(num_sync_downstream) + " " + helper.language(32049)):  # 'episode will be marked as watched in xbmc':
-            self.progress_update(75, helper.language(32052))  # "Setting episodes as seen in xbmc"
-            xbmc_helper.set_series_as_watched(self.downstream_sync)
-
-        if num_sync_upstream == 0 and num_sync_downstream == 0:
-            dialog.create_ok(helper.language(32050))
+        if self.total_sync_episodes == 0:
+            dialog.create_ok(helper.language(32050)) # "Your library is up to date. Nothing to sync"
+        else:
+            dialog.create_ok(helper.language(32053).format(self.total_sync_episodes)) # "{0} number of episodes has been synchronized"
 
 
     def sync_upstream(self):
-        for show in self.shows_to_sync_upstream():
-            # Incleace progress, like a ln-function. self.progress.update(50 / num_series * i)
+        num = xbmc_helper.number_watched_shows()
+        if num <= 0:
+            return
+
+        for i, show in enumerate(self.shows_to_sync_upstream()):
             self.check_if_canceled()
+            self.progress_update(i/num, helper.language(32043), show['title']) # "Uploading shows to episodehunter.tv"
             self.connection.set_show_as_watched(show)
+            self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
 
     def sync_downstream(self):
-        for episodes_ids in self.shows_to_sync_downstream():
-            # Incleace progress, like a ln-function. self.progress.update(50 / num_series * i)
+        num = xbmc_helper.number_unwatched_shows()
+        if num <= 0:
+            return
+
+        for i, show in enumerate(self.shows_to_sync_downstream()):
             self.check_if_canceled()
-            xbmc_helper.set_episodes_as_watched(episodes_ids)
+            self.progress_update(i/num, helper.language(32052), show['title']) # "Setting episodes as seen in xbmc"
+            xbmc_helper.set_episodes_as_watched(show['episodes'])
+            self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
 
     def shows_to_sync_upstream(self):
@@ -94,14 +93,13 @@ class Series(sync.Sync):
             ]
             if not episodes:
                 continue
-            yield episodes
+            yield {
+                'title': xbmc_show['title'],
+                'episodes': episodes
+            }
 
 
     def is_marked_as_watched_on_eh(self, series_id, season, episode):
-        """
-        Check if an episode has been set as watched on EH
-        :rtype : bool
-        """
         series_id = int(series_id)
         season = int(season)
         episode = int(episode)

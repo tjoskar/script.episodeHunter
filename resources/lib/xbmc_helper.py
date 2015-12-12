@@ -81,6 +81,33 @@ def unwatched_shows():
     return get_show_chunks(5, filter_by_playcount)
 
 
+def number_of_shows(filt):
+    params = {
+        'limits': {'start': 0, 'end': 1}
+    }
+
+    if filt:
+        params['filter'] = filt
+
+    result = execute_rpc(
+        method='VideoLibrary.GetTVShows',
+        params=params,
+        id=1
+    )
+
+    return result['limits']['total'] if 'limits' in result else 0
+
+
+def number_watched_shows():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    return number_of_shows(filter_by_playcount)
+
+
+def number_unwatched_shows():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    return number_of_shows(filter_by_playcount)
+
+
 def get_shows(start=0, end=0, filt=None):
     params = {
         'properties': ['title', 'year', 'imdbnumber', 'playcount', 'season', 'watchedepisodes']

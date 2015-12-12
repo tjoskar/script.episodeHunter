@@ -30,11 +30,8 @@ class Sync(object):
         self.progress = progress.create(msg)
         return self.progress
 
-    def progress_update(self, percent, line=None):
-        if line is None:
-            self.progress.update(percent)
-        else:
-            self.progress.update(percent, line)
+    def progress_update(self, percent, *lines):
+        self.progress.update(percent, *lines)
 
     def check_if_canceled(self):
         if xbmc.abortRequested:
