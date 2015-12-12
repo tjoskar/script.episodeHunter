@@ -2,13 +2,11 @@
 Sync watched TV episodes to Episodehunter
 """
 
-import copy
 import sync
 from resources.exceptions import UserAbortExceptions, ConnectionExceptions, SettingsExceptions
 from resources.lib import xbmc_helper
 from resources.lib import helper
 from resources.lib.gui import dialog
-from resources.model import series_model
 
 
 class Series(sync.Sync):
@@ -65,10 +63,17 @@ class Series(sync.Sync):
             self.connection.set_show_as_watched(show)
 
 
+    def sync_downstream(self):
+        for episodes_ids in self.shows_to_sync_downstream():
+            # Incleace progress, like a ln-function. self.progress.update(50 / num_series * i)
+            self.check_if_canceled()
+            xbmc_helper.set_episodes_as_watched(episodes_ids)
+
+
     def shows_to_sync_upstream(self):
         for xbmc_show in xbmc_helper.watched_shows():
             episodes = [
-                e for e in xbmc_helper.get_watched_episodes(xbmc_show) or []
+                e for e in xbmc_helper.watched_episodes(xbmc_show) or []
                 if not self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
             ]
             if not episodes:
@@ -81,22 +86,16 @@ class Series(sync.Sync):
             }
 
 
-    def get_series_to_sync_downstream(self):
-        xbmc_series = copy.deepcopy(self.xbmc_series)
-        num_series = len(xbmc_series)
-        self.downstream_sync = []
-        for i, show in enumerate(xbmc_series):
-            assert isinstance(show, series_model.Series)
-            self.progress.update(50 / num_series * i + 50)
-            if self.is_canceled():
-                break
-            show.episodes = [
-                e for e in show.episodes
-                if self.is_marked_as_watched_on_eh(show.tvdb_id, e.season, e.episode) and e.plays == 0
+    def shows_to_sync_downstream(self):
+        for xbmc_show in xbmc_helper.unwatched_shows():
+            episodes = [
+                e['episodeid'] for e in xbmc_helper.unwatched_episodes(xbmc_show) or []
+                if self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
             ]
-            if len(show.episodes) == 0:
+            if not episodes:
                 continue
-            self.downstream_sync.append(show)
+            yield episodes
+
 
     def is_marked_as_watched_on_eh(self, series_id, season, episode):
         """
@@ -123,10 +122,3 @@ class Series(sync.Sync):
             self.eh_watched_series[k] = {}
             for s in v['seasons']:
                 self.eh_watched_series[k][int(s['season'])] = s['episodes']
-
-
-    def watched_shows_in_xbmc(self):
-        watched_shows = xbmc_helper.watched_shows()
-        for show in watched_shows:
-            episodes = [xbmc_helper.get_watched_episodes(show, season) for season in xbmc_helper.get_watched_seasons(show)]
-            yield series_model.create_from_xbmc(show, episodes)

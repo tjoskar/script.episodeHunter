@@ -56,13 +56,12 @@ def get_movies_from_xbmc():
     return result['movies'] if 'movies' in result and isinstance(result['movies'], list) else []
 
 
-def watched_shows():
-    jumps = 5
+def get_show_chunks(size, filt):
+    jumps = size
     start = 0
     end = jumps
     while True:
-        filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
-        shows = get_shows(start, end, filter_by_playcount)
+        shows = get_shows(start, end, filt)
         start = end
         end = start + jumps
         if not shows:
@@ -70,6 +69,16 @@ def watched_shows():
         for show in shows:
             if meet_show_criteria(show):
                 yield show
+
+
+def watched_shows():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    return get_show_chunks(5, filter_by_playcount)
+
+
+def unwatched_shows():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    return get_show_chunks(5, filter_by_playcount)
 
 
 def get_shows(start=0, end=0, filt=None):
@@ -145,11 +154,17 @@ def get_episodes(tvshow, season=None, filt=None):
     return result['episodes'] if 'episodes' in result and isinstance(result['episodes'], list) else []
 
 
-def get_watched_episodes(show, season=None):
+def watched_episodes(show, season=None):
     filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
     return get_episodes(show, season, filter_by_playcount)
 
 
+def unwatched_episodes(show, season=None):
+    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    return get_episodes(show, season, filter_by_playcount)
+
+
+# TODO: Rename or remove
 def get_movie_details_from_xbmc_by_title(title, year, fields):
     result = execute_rpc(method='VideoLibrary.GetMovieDetails', params={'title': title, 'year': year, 'properties': fields}, id=1)
     return result['moviedetails'] if 'moviedetails' in result else None
@@ -204,6 +219,17 @@ def set_movies_as_watched(movies):
     } for i, m in enumerate(movies)]
 
     map(xbmc_rpc, helper.chunks(movies_rpc, 50))
+
+
+def set_episodes_as_watched(episodes_ids):
+    episodes = [{
+        'jsonrpc': '2.0',
+        'method': 'VideoLibrary.SetEpisodeDetails',
+        'params': {'episodeid': episode_id, 'playcount': 1},
+        'id': i
+    } for i, episode_id in enumerate(episodes_ids)]
+
+    map(xbmc_rpc, helper.chunks(episodes, 50))
 
 
 def set_series_as_watched(series):
