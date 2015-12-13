@@ -219,11 +219,6 @@ def unwatched_episodes(show, season=None):
 
 
 # TODO: Rename or remove
-def get_movie_details_from_xbmc_by_title(title, year, fields):
-    result = execute_rpc(method='VideoLibrary.GetMovieDetails', params={'title': title, 'year': year, 'properties': fields}, id=1)
-    return result['moviedetails'] if 'moviedetails' in result else None
-
-
 def get_movie_details_from_xbmc(library_id):
     result = execute_rpc(
         method='VideoLibrary.GetMovieDetails',
