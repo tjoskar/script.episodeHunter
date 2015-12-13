@@ -25,6 +25,10 @@ def get_api_key():
     return settings.getSetting("api_key")
 
 
+def in_debug_mode():
+    return convert_str_to_bool(settings.getSetting("debug"))
+
+
 def send_debug_reports():
     return convert_str_to_bool(settings.getSetting("debug_reports"))
 
@@ -41,8 +45,7 @@ def xbmc_print(msg):
 
 def debug(msg):
     """ Prints debug message if debugging is enable in the user settings """
-    is_debuging = settings.getSetting("debug")
-    if is_debuging:
+    if in_debug_mode():
         try:
             xbmc_print(str(msg))
         except Exception:
@@ -57,8 +60,7 @@ def notification(header, message, level=0):
     Create a notification and show it in 5 sec
     If debugging is enable in the user settings or the level is 0
     """
-    is_debuging = settings.getSetting("debug")
-    if is_debuging or level == 0:
+    if in_debug_mode() or level == 0:
         xbmc.executebuiltin("XBMC.Notification(%s,%s,%i,%s)" % (header, message, 5000, settings.getAddonInfo("icon")))
 
 
