@@ -236,9 +236,9 @@ msgid "Setting episodes as seen in xbmc"
 msgstr ""
 
 msgctxt "#32053"
-msgid "{0} number of episodes has been synchronized"
+msgid "{0} episodes has been synchronized"
 msgstr ""
 
 msgctxt "#32054"
-msgid "{0} number of movies has been synchronized"
+msgid "{0} movies has been synchronized"
 msgstr ""
