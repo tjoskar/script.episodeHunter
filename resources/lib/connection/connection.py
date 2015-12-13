@@ -33,21 +33,13 @@ class Connection(object):
 
     def set_shows_watched(self, shows):
         """ Set a several episodes for a TV show as watched """
-        # TO DO: Fix this shit
         for show in shows:
             self.set_show_as_watched(show)
 
     def set_show_as_watched(self, show):
         """ Set a show as watched on episodehunter.tv """
-        self.make_request(
-            '/v2/tv/watched',
-            {
-                'tvdb_id': show.tvdb_id,
-                'title': show.title,
-                'year': show.year,
-                'episodes': show.episodes
-            }
-        )
+        # Expecting: {'tvdb_id': Number, 'title': String, 'year': Number, 'episodes': []{season: number, episode: number}}
+        self.make_request('/v2/tv/watched', show)
 
     def get_watched_movies(self):
         """ Get watched movies from episodehunter.tv """
