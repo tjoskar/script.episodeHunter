@@ -254,10 +254,6 @@ def get_show_details(library_id):
     return result['tvshowdetails'] if 'tvshowdetails' in result else None
 
 
-def set_movie_as_watched(movie_id):
-    execute_rpc(method='VideoLibrary.SetMovieDetails', params={'movieid': movie_id, "playcount": 1}, id=1)
-
-
 def set_movies_as_watched(movies_ids):
     movies_rpc = [{
         'jsonrpc': '2.0',
@@ -276,19 +272,6 @@ def set_episodes_as_watched(episodes_ids):
         'params': {'episodeid': episode_id, 'playcount': 1},
         'id': i
     } for i, episode_id in enumerate(episodes_ids)]
-
-    map(xbmc_rpc, helper.chunks(episodes, 50))
-
-
-def set_series_as_watched(series):
-    episodes = []
-    for s in series:
-        episodes = episodes + [{
-            'jsonrpc': '2.0',
-            'method': 'VideoLibrary.SetEpisodeDetails',
-            'params': {'episodeid': e.xbmc_id, 'playcount': 1},
-            'id': i
-        } for i, e in enumerate(s.episodes)]
 
     map(xbmc_rpc, helper.chunks(episodes, 50))
 
