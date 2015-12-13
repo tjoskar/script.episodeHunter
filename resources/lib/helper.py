@@ -5,10 +5,10 @@ Helper Functions
 import xbmc
 import xbmcaddon
 import xbmcgui
-
 from resources.exceptions import SettingsExceptions
 
 __name__ = "EpisodeHunter"
+
 settings = xbmcaddon.Addon("script.episodehunter")
 language = settings.getLocalizedString
 
@@ -25,6 +25,14 @@ def get_api_key():
     return settings.getSetting("api_key")
 
 
+def in_debug_mode():
+    return convert_str_to_bool(settings.getSetting("debug"))
+
+
+def send_debug_reports():
+    return convert_str_to_bool(settings.getSetting("debug_reports"))
+
+
 def chunks(l, n):
     """ Yield successive n-sized chunks from l """
     for i in xrange(0, len(l), n):
@@ -37,8 +45,7 @@ def xbmc_print(msg):
 
 def debug(msg):
     """ Prints debug message if debugging is enable in the user settings """
-    is_debuging = settings.getSetting("debug")
-    if is_debuging:
+    if in_debug_mode():
         try:
             xbmc_print(str(msg))
         except Exception:
@@ -48,19 +55,12 @@ def debug(msg):
                 xbmc_print("You are trying to print a bad string, I can not even print it")
 
 
-def print_exception_information():
-    import traceback
-    stack_trace = traceback.format_exc()
-    debug(stack_trace)
-
-
 def notification(header, message, level=0):
     """
     Create a notification and show it in 5 sec
     If debugging is enable in the user settings or the level is 0
     """
-    is_debuging = settings.getSetting("debug")
-    if is_debuging or level == 0:
+    if in_debug_mode() or level == 0:
         xbmc.executebuiltin("XBMC.Notification(%s,%s,%i,%s)" % (header, message, 5000, settings.getAddonInfo("icon")))
 
 
@@ -131,7 +131,7 @@ def convert_str_to_bool(value):
     if isinstance(value, bool):
         return value
     elif not isinstance(value, str):
-        return None
+        return False
     elif value == 'true':
         return True
     elif value == 'false':
