@@ -76,14 +76,14 @@ def get_movie_chunks(size, filt):
         yield [movie for movie in movies if meet_movie_criteria(movie)]
 
 
-def watched_movies():
+def watched_movies(size):
     filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
-    return get_movie_chunks(50, filter_by_playcount)
+    return get_movie_chunks(size, filter_by_playcount)
 
 
-def unwatched_movies():
+def unwatched_movies(size):
     filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
-    return get_movie_chunks(50, filter_by_playcount)
+    return get_movie_chunks(size, filter_by_playcount)
 
 
 def number_of_movies(filt):

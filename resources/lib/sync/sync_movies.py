@@ -51,10 +51,10 @@ class Movies(Sync):
         if num <= 0:
             return
 
-        for movies in self.xbmc.watched_movies():
+        for j, movies in enumerate(self.xbmc.watched_movies(50)):
             approved_movies = []
             for i, movie in enumerate(movies):
-                percent = int(100*((i+1.0)/num))
+                percent = int(100*((i+(j*50)+1.0)/num))
                 self.check_if_canceled()
                 self.progress_update(percent, helper.language(32043), movie['title']) # "Syncing upstream"
                 if not self.movie_set_as_seen_on_eh(movie['imdbnumber']):
@@ -68,10 +68,10 @@ class Movies(Sync):
         if num <= 0:
             return
 
-        for movies in self.xbmc.unwatched_movies():
+        for j, movies in enumerate(self.xbmc.unwatched_movies(50)):
             approved_movies = []
             for i, movie in enumerate(movies):
-                percent = int(100*((i+1.0)/num))
+                percent = int(100*((i+(j*50)+1.0)/num))
                 self.check_if_canceled()
                 self.progress_update(percent, helper.language(32052), movie['title']) # "Syncing downstream"
                 if self.movie_set_as_seen_on_eh(movie['imdbnumber']):
