@@ -5,10 +5,10 @@ Helper Functions
 import xbmc
 import xbmcaddon
 import xbmcgui
-
 from resources.exceptions import SettingsExceptions
 
 __name__ = "EpisodeHunter"
+
 settings = xbmcaddon.Addon("script.episodehunter")
 language = settings.getLocalizedString
 

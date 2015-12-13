@@ -35,7 +35,7 @@ class Http(object):
         Handel http errors
         :rtype : None
         :param error:urllib2.HTTPError
-        :raise error:urllib2.HTTPError 
+        :raise error:urllib2.HTTPError
         """
         if error.code == 403:
             try:
