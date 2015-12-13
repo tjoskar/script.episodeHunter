@@ -81,15 +81,15 @@ class EHPlayer(xbmc.Player):
                     return None
 
                 if is_movie(self.__current_video):
-                    self.__media = xbmc_helper.get_movie_details_from_xbmc(self.__current_video['id'])
+                    self.__media = xbmc_helper.movie_details(self.__current_video['id'])
 
                 elif is_episode(self.__current_video):
-                    self.__media = xbmc_helper.get_episode_details_from_xbmc(self.__current_video['id'])
+                    self.__media = xbmc_helper.get_episode_details(self.__current_video['id'])
                     if self.__media is None:
                         # Did not find current episode
                         return
 
-                    series_match = xbmc_helper.get_show_details_from_xbmc(self.__media['tvshowid'])
+                    series_match = xbmc_helper.get_show_details(self.__media['tvshowid'])
                     self.__media['imdbnumber'] = series_match['imdbnumber']
                     self.__media['year'] = series_match['year']
 

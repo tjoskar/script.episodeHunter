@@ -218,12 +218,11 @@ def unwatched_episodes(show, season=None):
     return get_episodes(show, season, filter_by_playcount)
 
 
-# TODO: Rename or remove
-def get_movie_details_from_xbmc(library_id):
+def movie_details(movie_id):
     result = execute_rpc(
         method='VideoLibrary.GetMovieDetails',
         params={
-            'movieid': library_id,
+            'movieid': movie_id,
             'properties': ['year', 'imdbnumber', 'originaltitle']
         },
         id=1)
@@ -231,11 +230,11 @@ def get_movie_details_from_xbmc(library_id):
     return result['moviedetails'] if 'moviedetails' in result else None
 
 
-def get_episode_details_from_xbmc(library_id):
+def get_episode_details(episode_id):
     result = execute_rpc(
         method='VideoLibrary.GetEpisodeDetails',
         params={
-            'episodeid': library_id,
+            'episodeid': episode_id,
             'properties': ['tvshowid', 'showtitle', 'season', 'episode']
         },
         id=1)
@@ -243,7 +242,7 @@ def get_episode_details_from_xbmc(library_id):
     return result['episodedetails'] if 'episodedetails' in result else None
 
 
-def get_show_details_from_xbmc(library_id):
+def get_show_details(library_id):
     result = execute_rpc(
         method='VideoLibrary.GetTVShowDetails',
         params={
