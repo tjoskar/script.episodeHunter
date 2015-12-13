@@ -52,7 +52,7 @@ class Series(sync.Sync):
 
         for i, show in enumerate(self.shows_to_sync_upstream()):
             self.check_if_canceled()
-            self.progress_update(i/num, helper.language(32043), show['title']) # "Uploading shows to episodehunter.tv"
+            self.progress_update(100*((i+1)/num), helper.language(32043), show['title']) # "Uploading shows to episodehunter.tv"
             self.connection.set_show_as_watched(show)
             self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
@@ -64,7 +64,7 @@ class Series(sync.Sync):
 
         for i, show in enumerate(self.shows_to_sync_downstream()):
             self.check_if_canceled()
-            self.progress_update(i/num, helper.language(32052), show['title']) # "Setting episodes as seen in xbmc"
+            self.progress_update(100*((i+1)/num), helper.language(32052), show['title']) # "Setting episodes as seen in xbmc"
             xbmc_repository.set_episodes_as_watched(show['episodes'])
             self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 

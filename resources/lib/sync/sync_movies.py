@@ -55,8 +55,8 @@ class Movies(Sync):
             approved_movies = []
             for i, movie in enumerate(movies):
                 self.check_if_canceled()
-                self.progress_update(i/num, helper.language(32044), movie['title']) # "Uploading movies to EpisodeHunter"
                 self.total_sync_movies = self.total_sync_movies + 1
+                self.progress_update(100*((i+1)/num), helper.language(32044), movie['title']) # "Uploading movies to EpisodeHunter"
                 if not self.movie_set_as_seen_on_eh(movie['imdbnumber']):
                     approved_movies.append(movie_factory(movie))
             self.connection.set_movies_watched(approved_movies)
@@ -71,8 +71,8 @@ class Movies(Sync):
             approved_movies = []
             for i, movie in enumerate(movies):
                 self.check_if_canceled()
-                self.progress_update(i/num, helper.language(32048), movie['title']) # "Setting movies as seen in xbmc"
                 self.total_sync_movies = self.total_sync_movies + 1
+                self.progress_update(100*((i+1)/num), helper.language(32048), movie['title']) # "Setting movies as seen in xbmc"
                 if self.movie_set_as_seen_on_eh(movie['imdbnumber']):
                     approved_movies.append(movie['movieid'])
             self.xbmc.set_movies_as_watched(approved_movies)
