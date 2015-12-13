@@ -17,10 +17,10 @@ class GivenMovieSync(XbmcBaseTestCase, object):
     def setUp(self):
         super(GivenMovieSync, self).setUp()
         import resources.lib.sync.sync_movies as sync
-        from resources.lib import xbmc_helper
+        from resources.lib import xbmc_repository
         self.sync = sync
         self.xbmc.executeJSONRPC = self.json_rcp_mock = MagicMock()
-        xbmc_helper.set_movies_as_watched = self.set_movies_as_watched = MagicMock()
+        xbmc_repository.set_movies_as_watched = self.set_movies_as_watched = MagicMock()
 
         self.progress = Mock()
         self.xbmc.abortRequested = False

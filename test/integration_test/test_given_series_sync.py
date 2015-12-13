@@ -17,11 +17,11 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
 
     def setUp(self):
         super(GivenSeriesSync, self).setUp()
-        from resources.lib import xbmc_helper
+        from resources.lib import xbmc_repository
         import resources.lib.sync.sync_series as sync
 
         self.xbmc.executeJSONRPC = self.json_rcp_mock = MagicMock()
-        xbmc_helper.set_episodes_as_watched = self.set_episodes_as_watched = MagicMock()
+        xbmc_repository.set_episodes_as_watched = self.set_episodes_as_watched = MagicMock()
         self.sync = sync
 
         self.progress = Mock()

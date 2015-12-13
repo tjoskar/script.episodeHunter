@@ -4,7 +4,7 @@ Sync watched TV episodes to Episodehunter
 
 import sync
 from resources.exceptions import UserAbortExceptions, ConnectionExceptions, SettingsExceptions
-from resources.lib import xbmc_helper
+from resources.lib import xbmc_repository
 from resources.lib import helper
 from resources.lib.gui import dialog
 
@@ -46,7 +46,7 @@ class Series(sync.Sync):
 
 
     def sync_upstream(self):
-        num = xbmc_helper.number_watched_shows()
+        num = xbmc_repository.number_watched_shows()
         if num <= 0:
             return
 
@@ -58,21 +58,21 @@ class Series(sync.Sync):
 
 
     def sync_downstream(self):
-        num = xbmc_helper.number_unwatched_shows()
+        num = xbmc_repository.number_unwatched_shows()
         if num <= 0:
             return
 
         for i, show in enumerate(self.shows_to_sync_downstream()):
             self.check_if_canceled()
             self.progress_update(i/num, helper.language(32052), show['title']) # "Setting episodes as seen in xbmc"
-            xbmc_helper.set_episodes_as_watched(show['episodes'])
+            xbmc_repository.set_episodes_as_watched(show['episodes'])
             self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
 
     def shows_to_sync_upstream(self):
-        for xbmc_show in xbmc_helper.watched_shows():
+        for xbmc_show in xbmc_repository.watched_shows():
             episodes = [
-                e for e in xbmc_helper.watched_episodes(xbmc_show) or []
+                e for e in xbmc_repository.watched_episodes(xbmc_show) or []
                 if not self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
             ]
             if not episodes:
@@ -86,9 +86,9 @@ class Series(sync.Sync):
 
 
     def shows_to_sync_downstream(self):
-        for xbmc_show in xbmc_helper.unwatched_shows():
+        for xbmc_show in xbmc_repository.unwatched_shows():
             episodes = [
-                e['episodeid'] for e in xbmc_helper.unwatched_episodes(xbmc_show) or []
+                e['episodeid'] for e in xbmc_repository.unwatched_episodes(xbmc_show) or []
                 if self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
             ]
             if not episodes:

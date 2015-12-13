@@ -11,8 +11,8 @@ class GivenXbmcHelper(XbmcBaseTestCase, object):
     def setUp(self):
         super(GivenXbmcHelper, self).setUp()
         self.xbmc.executeJSONRPC = self.json_rcp_mock = MagicMock()
-        import resources.lib.xbmc_helper
-        self.helper = resources.lib.xbmc_helper
+        import resources.lib.xbmc_repository
+        self.helper = resources.lib.xbmc_repository
 
     def test_should_get_active_player(self):
         # Arrange

@@ -10,7 +10,7 @@ class MovieCriteria(XbmcBaseTestCase, object):
 
     def setUp(self):
         super(MovieCriteria, self).setUp()
-        from resources.lib.xbmc_helper import meet_movie_criteria
+        from resources.lib.xbmc_repository import meet_movie_criteria
         self.meet_movie_criteria = meet_movie_criteria
 
     def test_should_return_fasle_if_movie_has_no_imdb_id(self):

@@ -14,7 +14,7 @@ class TestShowCriteria(XbmcBaseTestCase, object):
 
     def setUp(self):
         super(TestShowCriteria, self).setUp()
-        import resources.lib.xbmc_helper as helper
+        import resources.lib.xbmc_repository as helper
 
         self.helper = helper
 

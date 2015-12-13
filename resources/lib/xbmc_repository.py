@@ -16,9 +16,6 @@ def xbmc_rpc(arg):
 
 
 def execute_rpc(**kargs):
-    """
-    :rtype : dict
-    """
     kargs['jsonrpc'] = '2.0'
     return xbmc_rpc(kargs)['result']
 

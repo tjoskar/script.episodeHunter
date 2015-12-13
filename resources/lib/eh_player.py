@@ -3,7 +3,7 @@ import json
 import xbmc
 from resources.exceptions import SettingsExceptions, ConnectionExceptions
 from resources.lib import helper
-from resources.lib import xbmc_helper
+from resources.lib import xbmc_repository
 from resources.lib import user
 from resources.lib.gui import dialog
 from resources.lib.database import Database
@@ -74,22 +74,22 @@ class EHPlayer(xbmc.Player):
 
         # Do we actually play a video
         if xbmc.Player().isPlayingVideo():
-            player_id = xbmc_helper.active_player()
-            self.__current_video = xbmc_helper.currently_playing(player_id)
+            player_id = xbmc_repository.active_player()
+            self.__current_video = xbmc_repository.currently_playing(player_id)
             if is_media(self.__current_video):
                 if not xbmc.Player().isPlayingVideo():
                     return None
 
                 if is_movie(self.__current_video):
-                    self.__media = xbmc_helper.movie_details(self.__current_video['id'])
+                    self.__media = xbmc_repository.movie_details(self.__current_video['id'])
 
                 elif is_episode(self.__current_video):
-                    self.__media = xbmc_helper.get_episode_details(self.__current_video['id'])
+                    self.__media = xbmc_repository.get_episode_details(self.__current_video['id'])
                     if self.__media is None:
                         # Did not find current episode
                         return
 
-                    series_match = xbmc_helper.get_show_details(self.__media['tvshowid'])
+                    series_match = xbmc_repository.get_show_details(self.__media['tvshowid'])
                     self.__media['imdbnumber'] = series_match['imdbnumber']
                     self.__media['year'] = series_match['year']
 

@@ -1,7 +1,7 @@
 from resources.lib.sync import Sync
 from resources.lib import helper
 from resources.lib.gui import dialog
-from resources.lib import xbmc_helper
+from resources.lib import xbmc_repository
 from resources.exceptions import ConnectionExceptions, UserAbortExceptions, SettingsExceptions
 
 
@@ -11,7 +11,7 @@ class Movies(Sync):
     Two-way sync between xbmc and EH
     """
 
-    def __init__(self, connection, xbmc=xbmc_helper):
+    def __init__(self, connection, xbmc=xbmc_repository):
         super(Movies, self).__init__(connection)
         self.eh_watched_movies = None
         self.total_sync_movies = 0
