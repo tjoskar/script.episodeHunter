@@ -50,11 +50,6 @@ class MovieCriteria(XbmcBaseTestCase, object):
         result = self.meet_movie_criteria(movie)
         self.assertFalse(result)
 
-    def test_should_return_false_if_movie_has_no_play_count(self):
-        movie = xbmc_movie_result.get('The Hunger Games', remove_attr=['playcount'])[0]
-        result = self.meet_movie_criteria(movie)
-        self.assertFalse(result)
-
     def test_should_return_true_if_movie_has_play_count_event_if_its_zero(self):
         movie = xbmc_movie_result.get('The Hunger Games')[0]
         movie['playcount'] = 0

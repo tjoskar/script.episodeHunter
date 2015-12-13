@@ -304,7 +304,4 @@ def meet_movie_criteria(movie):
     except ValueError:
         return False
 
-    if 'playcount' not in movie:
-        return False
-
     return True
