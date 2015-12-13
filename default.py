@@ -2,8 +2,8 @@
 
 from resources.lib import helper
 from resources.lib import sync
-from resources.lib.connection import Connection
-from resources.lib.connection import Http
+from resources.lib.connection.connection import Connection
+from resources.lib.connection.http import Http
 from resources.lib.gui import dialog
 from resources import config
 

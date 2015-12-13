@@ -7,8 +7,8 @@ from resources.lib import xbmc_repository
 from resources.lib import user
 from resources.lib.gui import dialog
 from resources.lib.database import Database
-from resources.lib.connection import Connection
-from resources.lib.connection import Http
+from resources.lib.connection.connection import Connection
+from resources.lib.connection.http import Http
 from resources import config
 
 
