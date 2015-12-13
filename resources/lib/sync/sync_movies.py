@@ -2,7 +2,7 @@ from resources.lib.sync import Sync
 from resources.lib import helper
 from resources.lib.gui import dialog
 from resources.lib import xbmc_repository
-from resources.model.movie_factory import movie_factory
+from resources.factory.movie_factory import movie_factory
 from resources.exceptions import ConnectionExceptions, UserAbortExceptions, SettingsExceptions
 
 

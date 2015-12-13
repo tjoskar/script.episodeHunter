@@ -3,7 +3,7 @@ import unittest
 import json
 
 from test.xbmc_base_test_case import XbmcBaseTestCase
-from resources.model.movie_factory import movie_factory
+from resources.factory.movie_factory import movie_factory
 from test.test_data import xbmc_movie_result
 
 
