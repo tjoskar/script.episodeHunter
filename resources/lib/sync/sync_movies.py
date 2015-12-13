@@ -43,7 +43,7 @@ class Movies(Sync):
         if self.total_sync_movies == 0:
             dialog.create_ok(helper.language(32050)) # "Your library is up to date. Nothing to sync"
         else:
-            dialog.create_ok(helper.language(32054).format(self.total_sync_movies)) # "{0} number of movies has been synchronized"
+            dialog.create_ok(helper.language(32054).format(self.total_sync_movies)) # "{0} movies has been synchronized"
 
 
     def sync_upstream(self):
@@ -54,8 +54,9 @@ class Movies(Sync):
         for movies in self.xbmc.watched_movies():
             approved_movies = []
             for i, movie in enumerate(movies):
+                percent = int(100*((i+1.0)/num))
                 self.check_if_canceled()
-                self.progress_update(100*((i+1)/num), helper.language(32044), movie['title']) # "Uploading movies to EpisodeHunter"
+                self.progress_update(percent, helper.language(32043), movie['title']) # "Syncing upstream"
                 if not self.movie_set_as_seen_on_eh(movie['imdbnumber']):
                     self.total_sync_movies = self.total_sync_movies + 1
                     approved_movies.append(movie_factory(movie))
@@ -70,8 +71,9 @@ class Movies(Sync):
         for movies in self.xbmc.unwatched_movies():
             approved_movies = []
             for i, movie in enumerate(movies):
+                percent = int(100*((i+1.0)/num))
                 self.check_if_canceled()
-                self.progress_update(100*((i+1)/num), helper.language(32048), movie['title']) # "Setting movies as seen in xbmc"
+                self.progress_update(percent, helper.language(32052), movie['title']) # "Syncing downstream"
                 if self.movie_set_as_seen_on_eh(movie['imdbnumber']):
                     self.total_sync_movies = self.total_sync_movies + 1
                     approved_movies.append(movie['movieid'])

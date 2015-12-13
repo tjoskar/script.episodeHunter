@@ -42,35 +42,30 @@ class Series(sync.Sync):
         if self.total_sync_episodes == 0:
             dialog.create_ok(helper.language(32050)) # "Your library is up to date. Nothing to sync"
         else:
-            dialog.create_ok(helper.language(32053).format(self.total_sync_episodes)) # "{0} number of episodes has been synchronized"
+            dialog.create_ok(helper.language(32053).format(self.total_sync_episodes)) # "{0} episodes has been synchronized"
 
 
     def sync_upstream(self):
-        num = xbmc_repository.number_watched_shows()
-        if num <= 0:
-            return
-
-        for i, show in enumerate(self.shows_to_sync_upstream()):
-            self.check_if_canceled()
-            self.progress_update(100*((i+1)/num), helper.language(32043), show['title']) # "Uploading shows to episodehunter.tv"
+        for show in self.shows_to_sync_upstream():
             self.connection.set_show_as_watched(show)
             self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
 
     def sync_downstream(self):
-        num = xbmc_repository.number_unwatched_shows()
-        if num <= 0:
-            return
-
-        for i, show in enumerate(self.shows_to_sync_downstream()):
-            self.check_if_canceled()
-            self.progress_update(100*((i+1)/num), helper.language(32052), show['title']) # "Setting episodes as seen in xbmc"
+        for show in self.shows_to_sync_downstream():
             xbmc_repository.set_episodes_as_watched(show['episodes'])
             self.total_sync_episodes = self.total_sync_episodes + len(show['episodes'])
 
 
     def shows_to_sync_upstream(self):
-        for xbmc_show in xbmc_repository.watched_shows():
+        num = xbmc_repository.number_watched_shows()
+        if num <= 0:
+            return
+
+        for i, xbmc_show in enumerate(xbmc_repository.watched_shows()):
+            percent = int(100*((i+1.0)/num))
+            self.check_if_canceled()
+            self.progress_update(percent, helper.language(32043), xbmc_show['title']) # "Syncing upstream"
             episodes = [
                 e for e in xbmc_repository.watched_episodes(xbmc_show) or []
                 if not self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
@@ -86,7 +81,15 @@ class Series(sync.Sync):
 
 
     def shows_to_sync_downstream(self):
-        for xbmc_show in xbmc_repository.unwatched_shows():
+        num = xbmc_repository.number_unwatched_shows()
+        if num <= 0:
+            return
+
+        for i, xbmc_show in enumerate(xbmc_repository.unwatched_shows()):
+            percent = int(100*((i+1.0)/num))
+            self.check_if_canceled()
+            self.progress_update(percent, helper.language(32052), xbmc_show['title']) # "Syncing downstream"
+
             episodes = [
                 e['episodeid'] for e in xbmc_repository.unwatched_episodes(xbmc_show) or []
                 if self.is_marked_as_watched_on_eh(xbmc_show['imdbnumber'], e['season'], e['episode'])
@@ -113,6 +116,7 @@ class Series(sync.Sync):
         return True
 
     def get_series_from_eh(self):
+        self.progress_update(1, helper.language(32056)) # "Fetching watch information from episodehunter.tv"
         eh_watched_series = self.connection.get_watched_shows()
         self.eh_watched_series = {}
         for k, v in eh_watched_series.iteritems():
@@ -120,3 +124,4 @@ class Series(sync.Sync):
             self.eh_watched_series[k] = {}
             for s in v['seasons']:
                 self.eh_watched_series[k][int(s['season'])] = s['episodes']
+        self.progress_update(100, helper.language(32056))
