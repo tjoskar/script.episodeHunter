@@ -1,6 +1,5 @@
 from resources.lib.sync import Sync
 from resources.lib import helper
-from resources.model import movie_model
 from resources.lib.gui import dialog
 from resources.lib import xbmc_helper
 from resources.exceptions import ConnectionExceptions, UserAbortExceptions, SettingsExceptions
