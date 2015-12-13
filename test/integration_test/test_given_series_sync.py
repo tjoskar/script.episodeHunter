@@ -11,31 +11,17 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
     Test class for tv shows sync methods between EH and XBMC
     """
 
-    xbmc = None
-    xbmcgui = None
-    get_tv_shows_from_xbmc = None
-    get_seasons_from_xbmc = None
-    get_episodes_from_xbmc = None
     set_episodes_as_watched = None
+    json_rcp_mock = None
+    sync = None
 
     def setUp(self):
         super(GivenSeriesSync, self).setUp()
         from resources.lib import xbmc_helper
+        import resources.lib.sync.sync_series as sync
 
         self.xbmc.executeJSONRPC = self.json_rcp_mock = MagicMock()
         xbmc_helper.set_episodes_as_watched = self.set_episodes_as_watched = MagicMock()
-
-        self.get_tv_shows_from_xbmc = Mock()
-        self.get_seasons_from_xbmc = Mock()
-        self.get_episodes_from_xbmc = Mock()
-        self.set_series_as_watched = Mock()
-
-        xbmc_helper.get_tv_shows_from_xbmc = self.get_tv_shows_from_xbmc
-        xbmc_helper.get_seasons_from_xbmc = self.get_seasons_from_xbmc
-        xbmc_helper.get_episodes_from_xbmc = self.get_episodes_from_xbmc
-        xbmc_helper.set_series_as_watched = self.set_series_as_watched
-
-        import resources.lib.sync.sync_series as sync
         self.sync = sync
 
         self.progress = Mock()
@@ -395,7 +381,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
         sync.sync()
 
         # Assert
-        self.assertFalse(self.set_series_as_watched.called)
+        self.assertFalse(self.set_episodes_as_watched.called)
         self.assertNotIn('set_show_as_watched', connection.called)
 
 
