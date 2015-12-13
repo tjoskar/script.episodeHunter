@@ -1,6 +1,5 @@
-from mock import Mock
 import unittest
-
+from mock import Mock
 from test.xbmc_base_test_case import XbmcBaseTestCase
 from test.test_data import eh_movie_result, xbmc_movie_result
 from test.mocks import connection_mock
@@ -48,7 +47,8 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.assertEqual(movies_to_upload['imdb_id'], 'tt0905372')
         self.assertEqual(movies_to_upload['year'], 2014)
         self.assertEqual(movies_to_upload['plays'], 1)
-        self.assertEqual(movies_to_upload['time'], '2014-12-01 22:03:31')
+        self.assertEqual(movies_to_upload['time'], 1417467811)
+
 
     def test_should_sync_one_movie_downstream(self):
         # Arrange

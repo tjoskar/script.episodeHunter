@@ -2,6 +2,7 @@ from resources.lib.sync import Sync
 from resources.lib import helper
 from resources.lib.gui import dialog
 from resources.lib import xbmc_repository
+from resources.model.movie_factory import movie_factory
 from resources.exceptions import ConnectionExceptions, UserAbortExceptions, SettingsExceptions
 
 
@@ -57,13 +58,7 @@ class Movies(Sync):
                 self.progress_update(i/num, helper.language(32044), movie['title']) # "Uploading movies to EpisodeHunter"
                 self.total_sync_movies = self.total_sync_movies + 1
                 if not self.movie_set_as_seen_on_eh(movie['imdbnumber']):
-                    approved_movies.append({
-                        'imdb_id': movie['imdbnumber'],
-                        'title': movie['title'] or movie['originaltitle'],
-                        'year': movie['year'],
-                        'plays': 1,
-                        'time': movie['lastplayed']
-                    })
+                    approved_movies.append(movie_factory(movie))
             self.connection.set_movies_watched(approved_movies)
 
 

@@ -60,7 +60,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.assertEqual(movie_to_upload[0][0]['title'], 'Battleship')
         self.assertEqual(movie_to_upload[0][0]['plays'], 1)
         self.assertEqual(movie_to_upload[0][0]['year'], 2014)
-        self.assertEqual(movie_to_upload[0][0]['time'], '1989-09-27 11:20:31')
+        self.assertEqual(movie_to_upload[0][0]['time'], 622894831)
         self.assertEqual(movie_to_upload[0][0]['imdb_id'], 'tt1440129')
 
 
