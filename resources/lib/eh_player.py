@@ -56,14 +56,13 @@ class EHPlayer(xbmc.Player):
 
     def run(self):
         self.sync_offline_data()
-        i = 0
-        while not xbmc.abortRequested:
-            xbmc.sleep(1000)
+        monitor = xbmc.Monitor()
+
+        while not monitor.abortRequested():
+            if monitor.waitForAbort(300):
+                break
             if self.is_playing:
-                i += 1
-                if i >= 300:
-                    self.watching()
-                    i = 0
+                self.watching()
 
     def onPlayBackStarted(self):
         """
