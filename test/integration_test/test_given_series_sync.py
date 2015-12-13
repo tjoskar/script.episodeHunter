@@ -83,7 +83,7 @@ class GivenSeriesSync(XbmcBaseTestCase, object):
             ),
             json.dumps(
                 {'result': {'limits': {'total': 0}}}
-            ),
+            )
         ]
 
         # Act

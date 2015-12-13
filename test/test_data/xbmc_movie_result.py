@@ -3,43 +3,45 @@ from resources.model import movie_model
 
 MOVIES = [
     {
-        'movieid': '1',
+        'movieid': 1,
         'imdbnumber': 'tt1392170',
-        'playcount': '3',
+        'playcount': 3,
         'originaltitle': 'The Hunger Games',
         'title': 'The Hunger Games',
-        'year': '2011',
+        'year': 2011,
         'lastplayed': '2014-10-10 20:03:31'
     }, {
-        'movieid': '2',
+        'movieid': 2,
         'imdbnumber': 'tt1440129',
-        'playcount': '1',
+        'playcount': 1,
         'originaltitle': 'Battleship',
         'title': 'Battleship',
-        'year': '2011',
+        'year': 2014,
         'lastplayed': '1989-09-27 11:20:31'
     }, {
-        'movieid': '3',
+        'movieid': 3,
         'imdbnumber': 'tt0905372',
-        'playcount': '1',
+        'playcount': 1,
         'originaltitle': 'The Thing',
         'title': 'The Thing',
-        'year': '2011',
+        'year': 2014,
         'lastplayed': '2014-12-01 22:03:31'
     }, {
-        'movieid': '4',
+        'movieid': 4,
         'imdbnumber': 'tt2788710',
-        'playcount': '0',
+        'playcount': 0,
         'originaltitle': 'The Interview',
         'title': 'The Interview',
-        'year': '2014'
+        'year': 2014,
+        'lastplayed': ''
     }, {
-        'movieid': '5',
+        'movieid': 5,
         'imdbnumber': 'tt0816692',
-        'playcount': '0',
+        'playcount': 0,
         'originaltitle': 'Interstellar',
         'title': 'Interstellar',
-        'year': '2014'
+        'year': 2014,
+        'lastplayed': ''
     }
 ]
 

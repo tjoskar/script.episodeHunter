@@ -45,15 +45,69 @@ def get_currently_playing_from_xbmc(playerid):
         return None
 
 
-def get_movies_from_xbmc():
+def get_movies(start=0, end=0, filt=None):
+    params = {
+        'properties': ['title', 'year', 'originaltitle', 'imdbnumber', 'lastplayed']
+    }
+    if end != 0:
+        params['limits'] = {'start': start, 'end': end}
+    if filt:
+        params['filter'] = filt
     result = execute_rpc(
         method='VideoLibrary.GetMovies',
-        params={
-            'properties': ['title', 'year', 'originaltitle', 'imdbnumber', 'playcount', 'lastplayed']
-        },
+        params=params,
         id=1)
 
     return result['movies'] if 'movies' in result and isinstance(result['movies'], list) else []
+
+
+def get_movie_chunks(size, filt):
+    jumps = size
+    start = 0
+    end = jumps
+    while True:
+        movies = get_movies(start, end, filt)
+        start = end
+        end = start + jumps
+        if not movies:
+            return
+        yield [movie for movie in movies if meet_movie_criteria(movie)]
+
+
+def watched_movies():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    return get_movie_chunks(50, filter_by_playcount)
+
+
+def unwatched_movies():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    return get_movie_chunks(50, filter_by_playcount)
+
+
+def number_of_movies(filt):
+    params = {
+        'limits': {'start': 0, 'end': 1}
+    }
+
+    if filt:
+        params['filter'] = filt
+
+    result = execute_rpc(
+        method='VideoLibrary.GetMovies',
+        params=params,
+        id=1)
+
+    return result['limits']['total'] if 'limits' in result else 0
+
+
+def number_watched_movies():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    return number_of_movies(filter_by_playcount)
+
+
+def number_unwatched_movies():
+    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    return number_of_movies(filter_by_playcount)
 
 
 def get_show_chunks(size, filt):
@@ -237,13 +291,13 @@ def set_movie_as_watched(movie_id):
     execute_rpc(method='VideoLibrary.SetMovieDetails', params={'movieid': movie_id, "playcount": 1}, id=1)
 
 
-def set_movies_as_watched(movies):
+def set_movies_as_watched(movies_ids):
     movies_rpc = [{
         'jsonrpc': '2.0',
         'method': 'VideoLibrary.SetMovieDetails',
-        'params': {'movieid': m.xbmc_id, 'playcount': 1},
+        'params': {'movieid': movie_id, 'playcount': 1},
         'id': i
-    } for i, m in enumerate(movies)]
+    } for i, movie_id in enumerate(movies_ids)]
 
     map(xbmc_rpc, helper.chunks(movies_rpc, 50))
 
@@ -285,6 +339,25 @@ def meet_show_criteria(tvshow):
         if 'year' not in tvshow or int(tvshow['year']) <= 0:
             return False
     except ValueError:
+        return False
+
+    return True
+
+
+def meet_movie_criteria(movie):
+    if 'imdbnumber' not in movie or movie['imdbnumber'] == '':
+        return False
+
+    if 'title' not in movie and 'originaltitle' not in movie:
+        return False
+
+    try:
+        if 'year' not in movie or int(movie['year']) <= 0:
+            return False
+    except ValueError:
+        return False
+
+    if 'playcount' not in movie:
         return False
 
     return True
