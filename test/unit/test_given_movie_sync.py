@@ -47,7 +47,7 @@ class GivenMovieSync(XbmcBaseTestCase, object):
         self.assertEqual(movies_to_upload['imdb_id'], 'tt0905372')
         self.assertEqual(movies_to_upload['year'], 2014)
         self.assertEqual(movies_to_upload['plays'], 1)
-        self.assertEqual(movies_to_upload['time'], 1417467811)
+        self.assertTrue(1410000000 <= movies_to_upload['time'] <= 1419000000)
 
 
     def test_should_sync_one_movie_downstream(self):

@@ -16,7 +16,7 @@ MOVIES = [
         'originaltitle': 'Battleship',
         'title': 'Battleship',
         'year': 2014,
-        'lastplayed': '1989-09-27 11:20:31'
+        'lastplayed': '2014-10-05 20:03:31'
     }, {
         'movieid': 3,
         'imdbnumber': 'tt0905372',
