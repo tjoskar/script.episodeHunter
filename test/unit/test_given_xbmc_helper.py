@@ -20,7 +20,7 @@ class GivenXbmcHelper(XbmcBaseTestCase, object):
         self.json_rcp_mock.return_value = response
 
         # Act
-        result = self.helper.get_active_players_from_xbmc()
+        result = self.helper.active_player()
 
         # Assert
         self.assertEqual(result, 5)

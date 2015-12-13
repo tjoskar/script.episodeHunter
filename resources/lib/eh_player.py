@@ -74,8 +74,8 @@ class EHPlayer(xbmc.Player):
 
         # Do we actually play a video
         if xbmc.Player().isPlayingVideo():
-            player_id = xbmc_helper.get_active_players_from_xbmc()
-            self.__current_video = xbmc_helper.get_currently_playing_from_xbmc(player_id)
+            player_id = xbmc_helper.active_player()
+            self.__current_video = xbmc_helper.currently_playing(player_id)
             if is_media(self.__current_video):
                 if not xbmc.Player().isPlayingVideo():
                     return None

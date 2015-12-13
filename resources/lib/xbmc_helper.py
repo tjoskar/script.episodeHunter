@@ -23,7 +23,7 @@ def execute_rpc(**kargs):
     return xbmc_rpc(kargs)['result']
 
 
-def get_active_players_from_xbmc():
+def active_player():
     result = execute_rpc(method='Player.GetActivePlayers', id=1)
 
     try:
@@ -34,8 +34,13 @@ def get_active_players_from_xbmc():
         return None
 
 
-def get_currently_playing_from_xbmc(playerid):
-    result = execute_rpc(method='Player.GetItem', params={'playerid': playerid, 'properties': ['title']}, id=1)
+def currently_playing(playerid):
+    result = execute_rpc(
+        method='Player.GetItem',
+        params={
+            'playerid': playerid, 'properties': ['title']
+        },
+        id=1)
 
     try:
         return result['item']
