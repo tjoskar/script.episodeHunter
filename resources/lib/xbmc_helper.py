@@ -185,38 +185,6 @@ def get_shows(start=0, end=0, filt=None):
     return result['tvshows'] if 'tvshows' in result and isinstance(result['tvshows'], list) else []
 
 
-def get_seasons_from_xbmc(tvshow, filt=None):
-    if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
-        return
-
-    params = {
-        'tvshowid': tvshow['tvshowid'],
-        'properties': ['watchedepisodes', 'season']
-    }
-
-    if filt:
-        params['filter'] = filt
-
-    result = execute_rpc(
-        method='VideoLibrary.GetSeasons',
-        params=params,
-        id=1
-    )
-
-    seasons = result['seasons'] if 'seasons' in result and isinstance(result['seasons'], list) else []
-
-    for season in seasons:
-        try:
-            yield season['season']
-        except KeyError:
-            pass
-
-
-def get_watched_seasons(show):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
-    return get_seasons_from_xbmc(show, filter_by_playcount)
-
-
 def get_episodes(tvshow, season=None, filt=None):
     if 'tvshowid' not in tvshow or tvshow['tvshowid'] == '':
         return []
