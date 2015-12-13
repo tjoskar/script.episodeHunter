@@ -53,6 +53,10 @@ msgctxt "#32008"
 msgid "Debug"
 msgstr ""
 
+msgctxt "#32055"
+msgid "Send crash reports to episodehunter"
+msgstr ""
+
 #Headline menu
 
 msgctxt "#32009"

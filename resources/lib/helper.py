@@ -25,6 +25,10 @@ def get_api_key():
     return settings.getSetting("api_key")
 
 
+def send_debug_reports():
+    return convert_str_to_bool(settings.getSetting("debug_reports"))
+
+
 def chunks(l, n):
     """ Yield successive n-sized chunks from l """
     for i in xrange(0, len(l), n):
@@ -46,12 +50,6 @@ def debug(msg):
                 xbmc_print("You are trying to print some bad string, " + str(msg).encode("utf-8", "ignore"))
             except Exception:
                 xbmc_print("You are trying to print a bad string, I can not even print it")
-
-
-def print_exception_information():
-    import traceback
-    stack_trace = traceback.format_exc()
-    debug(stack_trace)
 
 
 def notification(header, message, level=0):
@@ -131,7 +129,7 @@ def convert_str_to_bool(value):
     if isinstance(value, bool):
         return value
     elif not isinstance(value, str):
-        return None
+        return False
     elif value == 'true':
         return True
     elif value == 'false':
