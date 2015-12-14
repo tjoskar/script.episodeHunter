@@ -93,33 +93,6 @@ def is_settings_okey(daemon=False, silent=False):
         return False
 
 
-def not_seen_movie(imdb, array):
-    for x in array:
-        if imdb == x['imdb_id']:
-            return False
-    return True
-
-def seen_movie(imdb, array_of_movies):
-    for movie in array_of_movies:
-        if imdb == movie['imdb_id']:
-            return True
-    return False
-
-
-def seen_episode(e, array):
-    for i in range(0, len(array)):
-        if e == array[i]:
-            return True
-    return False
-
-
-def is_not_in(test, array):
-    for x in array:
-        if test in x:
-            return False
-    return True
-
-
 def xbmc_time_to_seconds(timestr):
     seconds = 0
     for part in timestr.split(':'):
