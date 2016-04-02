@@ -3,13 +3,19 @@ from resources.lib.helper import settings
 from resources.lib import helper
 from resources import config
 
+def try_convert_to_string(msg):
+    try:
+        return str(msg)
+    except Exception:
+        return ''
+
 
 def create():
     return xbmcgui.Dialog()
 
 
 def create_ok(*msg):
-    return create().ok(config.__NAME__, *msg)
+    return create().ok(config.__NAME__, *map(try_convert_to_string, msg))
 
 
 def create_error_dialog(*msg):
