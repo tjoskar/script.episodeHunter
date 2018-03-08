@@ -1,6 +1,5 @@
 import xbmc
 import xbmcaddon
-import xbmcgui
 from resources.config import __NAME__
 
 settings = xbmcaddon.Addon("script.episodehunter")

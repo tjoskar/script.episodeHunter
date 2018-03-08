@@ -2,6 +2,7 @@
 <addon id="script.episodehunter" version="2.0.0" name="EpisodeHunter" provider-name="Episodehunter.tv">
     <requires>
         <import addon="xbmc.python" version="2.25.0"/>
+        <import addon="xbmc.addon" version="17.0.0"/>
     </requires>
     <extension point="xbmc.python.script" library="default.py">
         <provides>video</provides>
