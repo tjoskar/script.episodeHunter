@@ -1,9 +1,11 @@
 import socket
-import urllib2
 import json
-
-from resources.exceptions import ConnectionExceptions, SettingsExceptions
 from resources import config
+
+try:
+    import urllib2 as urllib_request  # for python 2
+except ImportError:
+    import urllib.request as urllib_request  # for python 3
 
 
 class Http(object):
@@ -13,39 +15,15 @@ class Http(object):
         socket.setdefaulttimeout(config.__HTTP_TIMEOUT__)
         self.__base_url = base_url
 
-    def make_request(self, api_endpoint, data=None):
-        """
-        Create an POST request and returning the result
-        :param api_endpoint:string
-        :param data:json string
-        :return:dictionary
-        """
+    def make_request(self, data=None):
         data = data or {}
-        request = urllib2.Request(self.__base_url + api_endpoint, data, {'Content-Type': 'application/json'})
-        try:
-            response = urllib2.urlopen(request)
-            return json.load(response)
-        except urllib2.HTTPError, error:
-            self.error_handler(error)
-        except urllib2.URLError, error:
-            raise ConnectionExceptions(error.reason)
+        data = json.dumps(data, default=lambda o: o.__dict__)
+        data = str(data)
+        data = data.encode('utf-8')
 
-    def error_handler(self, error):
-        """
-        Handel http errors
-        :rtype : None
-        :param error:urllib2.HTTPError
-        :raise error:urllib2.HTTPError
-        """
-        if error.code == 403:
-            try:
-                raise SettingsExceptions(json.load(error)['data'])
-            except KeyError:
-                raise SettingsExceptions()
-        elif error.code == 400:
-            try:
-                raise ConnectionExceptions(json.load(error)['data'])
-            except KeyError:
-                raise ConnectionExceptions()
-        else:
-            raise ConnectionExceptions(str(error))
+        request = urllib_request.Request(self.__base_url, data, {
+            'Content-Type': 'application/json'})
+        try:
+            request.urlopen(request)
+        except Exception:
+            pass

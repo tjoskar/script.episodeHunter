@@ -1,6 +1,6 @@
 import json
 import xbmc
-import helper
+from resources.lib import helper
 
 
 def xbmc_rpc(arg):
@@ -42,7 +42,8 @@ def currently_playing(playerid):
     try:
         return result['item']
     except KeyError:
-        helper.debug("Failing to fetch playing item for player id: " + str(playerid))
+        helper.debug(
+            "Failing to fetch playing item for player id: " + str(playerid))
         helper.debug(result)
         return None
 
@@ -77,12 +78,14 @@ def get_movie_chunks(size, filt):
 
 
 def watched_movies(size):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'greaterthan', 'value': '0'}
     return get_movie_chunks(size, filter_by_playcount)
 
 
 def unwatched_movies(size):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'lessthan', 'value': '1'}
     return get_movie_chunks(size, filter_by_playcount)
 
 
@@ -103,12 +106,14 @@ def number_of_movies(filt):
 
 
 def number_watched_movies():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'greaterthan', 'value': '0'}
     return number_of_movies(filter_by_playcount)
 
 
 def number_unwatched_movies():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'lessthan', 'value': '1'}
     return number_of_movies(filter_by_playcount)
 
 
@@ -128,12 +133,14 @@ def get_show_chunks(size, filt):
 
 
 def watched_shows():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'greaterthan', 'value': '0'}
     return get_show_chunks(5, filter_by_playcount)
 
 
 def unwatched_shows():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'lessthan', 'value': '1'}
     return get_show_chunks(5, filter_by_playcount)
 
 
@@ -155,12 +162,14 @@ def number_of_shows(filt):
 
 
 def number_watched_shows():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'greaterthan', 'value': '0'}
     return number_of_shows(filter_by_playcount)
 
 
 def number_unwatched_shows():
-    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'lessthan', 'value': '1'}
     return number_of_shows(filter_by_playcount)
 
 
@@ -206,12 +215,14 @@ def get_episodes(tvshow, season=None, filt=None):
 
 
 def watched_episodes(show, season=None):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'greaterthan', 'value': '0'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'greaterthan', 'value': '0'}
     return get_episodes(show, season, filter_by_playcount)
 
 
 def unwatched_episodes(show, season=None):
-    filter_by_playcount = {'field': 'playcount', 'operator': 'lessthan', 'value': '1'}
+    filter_by_playcount = {'field': 'playcount',
+                           'operator': 'lessthan', 'value': '1'}
     return get_episodes(show, season, filter_by_playcount)
 
 
