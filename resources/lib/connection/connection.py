@@ -15,9 +15,10 @@ class Connection(object):
 
     def make_request(self, **kargs):
         """ Send message """
-        helper.check_user_credentials()
-        kargs['username'] = helper.get_username()
-        kargs['apikey'] = helper.get_api_key()
+        if not helper.valid_user_credentials():
+            return None
+        kargs['username'] = helper.username()
+        kargs['apikey'] = helper.api_key()
         return self.__connection.make_request(kargs)
 
     def start_watching_movie(self, **kargs):
