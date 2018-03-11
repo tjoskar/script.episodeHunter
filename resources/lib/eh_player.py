@@ -85,7 +85,7 @@ class EHPlayer(xbmc.Player):
                 self.__total_time = xbmc.Player().getTotalTime()
                 self.is_playing = True
                 self.__is_active = True
-                self.communicate_with_eh('start')
+                self.send_request('start')
             else:
                 self.reset_var()
 
@@ -108,9 +108,9 @@ class EHPlayer(xbmc.Player):
     def onPlayBackPaused(self):
         """ On pause """
         helper.debug("onPlayBackPaused")
-        if self.__is_active and self.is_playing:  # Are we really playing?
-            self.is_playing = False               # Okay then, lets pause
-            self.update_watched_time()            # Update the playing time
+        if self.__is_active and self.is_playing:
+            self.is_playing = False
+            self.update_watched_time()
 
     def onPlayBackResumed(self):
         """ On resumed """
@@ -135,12 +135,14 @@ class EHPlayer(xbmc.Player):
         scrobble_min_view_time_option = helper.scrobble_min_view_time()
 
         if (self.__watched_time / self.__total_time) * 100 >= float(scrobble_min_view_time_option):
-            self.communicate_with_eh('scrobble')
+            self.send_request('scrobble')
         else:
-            self.communicate_with_eh('stop')
+            self.send_request('stop')
 
     def send_request(self, event_type):
+        helper.debug("send_request")
         if not helper.valid_user_credentials():
+            helper.debug("Not valid user credentials")
             return None
 
         if is_movie(self.__current_video) and helper.scrobble_movies():
@@ -159,6 +161,8 @@ class EHPlayer(xbmc.Player):
                 self.__connection.cancel_watching_episode(**argsDict)
             elif event_type == "scrobble":
                 self.__connection.scrobble_episode(**argsDict)
+        else:
+            helper.debug("Not a valid episode or movie")
 
     def create_episode_object(self):
         return {
