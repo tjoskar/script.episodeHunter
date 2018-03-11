@@ -3,7 +3,6 @@ import xbmcaddon
 from resources.config import __NAME__
 
 settings = xbmcaddon.Addon("script.episodehunter")
-language = settings.getLocalizedString
 
 
 def username():
