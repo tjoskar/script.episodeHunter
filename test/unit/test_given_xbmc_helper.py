@@ -3,6 +3,7 @@ import json
 from mock import MagicMock, call
 from test.xbmc_base_test_case import XbmcBaseTestCase
 
+
 class GivenXbmcHelper(XbmcBaseTestCase, object):
 
     json_rcp_mock = None
