@@ -75,7 +75,7 @@ class EHPlayer(xbmc.Player):
                         self.__current_video['id'])
                     if self.__media is None:
                         # Did not find current episode
-                        return
+                        return None
 
                     series_match = xbmc_repository.get_show_details(
                         self.__media['tvshowid'])
@@ -88,6 +88,7 @@ class EHPlayer(xbmc.Player):
                 self.send_request('start')
             else:
                 self.reset_var()
+        return None
 
     def onPlayBackEnded(self):
         """ Called when the playback is ending """
@@ -146,23 +147,24 @@ class EHPlayer(xbmc.Player):
             return None
 
         if is_movie(self.__current_video) and helper.scrobble_movies():
-            argsDict = self.create_movie_object()
+            args_dict = self.create_movie_object()
             if event_type == "start":
-                self.__connection.start_watching_movie(**argsDict)
+                self.__connection.start_watching_movie(**args_dict)
             elif event_type == "stop":
-                self.__connection.cancel_watching_movie(**argsDict)
+                self.__connection.cancel_watching_movie(**args_dict)
             elif event_type == "scrobble":
-                self.__connection.scrobble_movie(**argsDict)
+                self.__connection.scrobble_movie(**args_dict)
         elif is_episode(self.__current_video) and helper.scrobble_episodes():
-            argsDict = self.create_episode_object()
+            args_dict = self.create_episode_object()
             if event_type == "start":
-                self.__connection.start_watching_episode(**argsDict)
+                self.__connection.start_watching_episode(**args_dict)
             elif event_type == "stop":
-                self.__connection.cancel_watching_episode(**argsDict)
+                self.__connection.cancel_watching_episode(**args_dict)
             elif event_type == "scrobble":
-                self.__connection.scrobble_episode(**argsDict)
+                self.__connection.scrobble_episode(**args_dict)
         else:
             helper.debug("Not a valid episode or movie")
+        return None
 
     def create_episode_object(self):
         return {

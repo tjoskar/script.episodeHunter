@@ -3,7 +3,6 @@ Connection class
 Makes all HTTP request to episodehunter.tv
 """
 
-import json
 from resources.lib import helper
 
 
