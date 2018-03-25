@@ -180,9 +180,9 @@ class EHPlayer(xbmc.Player):
 
     def create_movie_object(self):
         return {
-            'originaltitle': self.__media['originaltitle'],
+            'original_title': self.__media['originaltitle'],
             'year': self.__media['year'],
-            'imdb_id': self.__media['imdbnumber'],
+            'themoviedb_id': self.__media['imdbnumber'],
             'duration': self.__total_time / 60,
             'percent': int(100 * self.__watched_time / self.__total_time),
             'timestamp': int(time.time())
