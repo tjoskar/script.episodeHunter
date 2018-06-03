@@ -30,7 +30,7 @@ msgid "Username"
 msgstr ""
 
 msgctxt "#32003"
-msgid "API key"
+msgid "API key (you can find yours on: https://episodehunter.tv/user/settings)"
 msgstr ""
 
 msgctxt "#32004"
