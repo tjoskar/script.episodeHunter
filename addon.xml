@@ -14,6 +14,9 @@ Episodehunter keeps automatically a record of what you are watching and can ther
 You are required to have an EpisodeHunter account for this plugin.
 Create an account on episodehunter.tv
         </description>
+        <news>v2.0.4 (2018-06-03)
+- Remove movie and shows sync
+- Remove offline database</news>
         <platform>all</platform>
         <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
         <language>en</language>
