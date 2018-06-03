@@ -6,8 +6,7 @@ This [Kodi](http://kodi.tv/) addon automatically scrobble what you are watching 
 
 ### Requirement
 
-You are required to have an EpisodeHunter account for this addon.
-Register on [episodehunter.tv](https://episodehunter.tv)
+You are required to have an EpisodeHunter account for this addon. You can find your api key on the [settings page](https://episodehunter.tv/user/settings) after [register](https://episodehunter.tv)
 
 ### Installation
 
